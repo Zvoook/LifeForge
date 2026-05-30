@@ -1,6 +1,7 @@
 package main
 
 type TaskRepository interface {
+	GetId() uint32
 	Save(task *Task) error
 	FindById(id uint32) (Task, error)
 	FindAll() []Task
@@ -14,13 +15,17 @@ type InMemoryTaskRepository struct {
 	nextId uint32
 }
 
-func (r *InMemoryTaskRepository) getId() uint32 {
+func NewRepository() InMemoryTaskRepository {
+	return InMemoryTaskRepository{tasks: make(map[uint32]Task), nextId: 0}
+}
+
+func (r *InMemoryTaskRepository) GetId() uint32 {
 	r.nextId++
 	return r.nextId
 }
 
 func (r *InMemoryTaskRepository) Save(t *Task) error {
-	id := r.getId()
+	id := r.GetId()
 	t.ID = id
 	r.tasks[id] = *t
 	return nil
