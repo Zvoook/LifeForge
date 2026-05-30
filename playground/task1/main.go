@@ -6,12 +6,12 @@ import (
 
 func main() {
 	task1 := Task{
-		id:               1,
-		area:             Backend,
-		title:            "First task",
-		status:           in_progress,
-		priority:         1,
-		estimatedMinutes: 120,
+		ID:               1,
+		Area:             Backend,
+		Title:            "First task",
+		Status:           in_progress,
+		Priority:         1,
+		EstimatedMinutes: 120,
 	}
 
 	fmt.Println(task1)
