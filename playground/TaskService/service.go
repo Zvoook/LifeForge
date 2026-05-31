@@ -8,7 +8,7 @@ func NewTaskService(r TaskRepository) TaskService {
 	return TaskService{Repository: r}
 }
 
-func (s *TaskService) CreateTask(title string, area Area, priority uint8, estimatedMinutes uint32) (Task, error) {
+func (s *TaskService) CreateTask(title string, area Area, priority int, estimatedMinutes int) (Task, error) {
 	if !validateTitle(title) {
 		return Task{}, ErrInvalidTitle
 	}
@@ -64,7 +64,7 @@ func (s *TaskService) CompleteTask(id uint32) error {
 	return ErrTaskAlreadyCompleted
 }
 
-func (s *TaskService) ChangePriority(id uint32, priority uint8) error {
+func (s *TaskService) ChangePriority(id uint32, priority int) error {
 	if !validatePriority(priority) {
 		return ErrInvalidPriority
 	}

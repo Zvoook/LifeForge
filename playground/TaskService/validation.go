@@ -15,15 +15,15 @@ func validateStatus(status Status) bool {
 	return status.IsValid()
 }
 
-func validatePriority(priority uint8) bool {
+func validatePriority(priority int) bool {
 	if priority < 1 || priority > 10 {
 		return false
 	}
 	return true
 }
 
-func validateEstimatedMinutes(EstimatedMinutes uint32) bool {
-	if EstimatedMinutes == 0 {
+func validateEstimatedMinutes(em int) bool {
+	if em <= 0 {
 		return false
 	}
 	return true

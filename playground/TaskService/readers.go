@@ -7,8 +7,9 @@ import (
 )
 
 func (c *CLI) readLine(prompt string) (string, error) {
-	fmt.Println(prompt)
+	fmt.Print(prompt)
 	str, err := c.Reader.ReadString('\n')
+	fmt.Print("\n")
 
 	if err != nil {
 		return "", err
@@ -30,14 +31,14 @@ func (c *CLI) readInt(prompt string) (int, error) {
 	digit, err := strconv.Atoi(str)
 
 	if err != nil {
-		return 0, err
+		return 0, ErrUnknownValue
 	}
 
 	return digit, nil
 }
 
 func (c *CLI) readID() (uint32, error) {
-	id, err := c.readInt("Enter the ID:")
+	id, err := c.readInt("Enter the ID: ")
 
 	if err != nil {
 		return 0, err
@@ -50,7 +51,7 @@ func (c *CLI) readID() (uint32, error) {
 }
 
 func (c *CLI) readTitle() (string, error) {
-	t, err := c.readLine("Enter the title:")
+	t, err := c.readLine("Enter the title: ")
 
 	if err != nil {
 		return "", err
@@ -62,37 +63,38 @@ func (c *CLI) readTitle() (string, error) {
 	return t, nil
 }
 
-func (c *CLI) readPriority() (uint8, error) {
-	p, err := c.readInt("Enter the priority:")
+func (c *CLI) readPriority() (int, error) {
+	p, err := c.readInt("Enter the priority: ")
 
 	if err != nil {
 		return 0, err
 	}
-	if !validatePriority(uint8(p)) {
+	if !validatePriority(p) {
 		return 0, ErrInvalidPriority
 	}
 
-	return uint8(p), nil
+	return p, nil
 }
 
-func (c *CLI) readEstimatedMinutes() (uint32, error) {
-	em, err := c.readInt("Enter estimated time in minutes:")
+func (c *CLI) readEstimatedMinutes() (int, error) {
+	em, err := c.readInt("Enter estimated time in minutes: ")
 
 	if err != nil {
 		return 0, err
 	}
-	if !validateEstimatedMinutes(uint32(em)) {
+	if !validateEstimatedMinutes(em) {
 		return 0, ErrInvalidEstimatedMinutes
 	}
 
-	return uint32(em), nil
+	return em, nil
 }
 
 func (c *CLI) readArea() (Area, error) {
-	a, err := c.readInt("Choose area: \n1. Backend \n2. English \n3. Guitar \n4. Algorithms \n5. University")
+	printInfo("Areas: \n1. Backend \n2. English \n3. Guitar \n4. Algorithms \n5. University\n")
+	a, err := c.readInt("Choose area: ")
 
 	if err != nil {
-		return Unknown, err
+		return Unknown, ErrInvalidArea
 	}
 
 	switch a {

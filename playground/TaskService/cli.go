@@ -5,8 +5,6 @@ import (
 	"os"
 )
 
-const Menu = "╔══════════════════════════════════════╗ \n║          LifeForge Task CLI          ║ \n╠══════════════════════════════════════╣ \n║ 1. Create task                       ║ \n║ 2. Show all tasks                    ║ \n║ 3. Show tasks by area                ║ \n║ 4. Find task by ID                   ║ \n║ 5. Complete task                     ║ \n║ 6. Change task priority              ║ \n║ 7. Delete task                       ║ \n║ 8. Show dashboard                    ║ \n║ 0. Exit                              ║ \n╚══════════════════════════════════════╝\n"
-
 type CLI struct {
 	Reader  *bufio.Reader
 	Service TaskService
@@ -18,41 +16,44 @@ func NewCLI(s *TaskService) CLI {
 
 func (c *CLI) run() {
 	for {
-		c.printMenu()
-		action, err := c.readInt("Select action:")
+		clearScreen()
+		printMenu()
+
+		action, err := c.readInt("\nSelect action: ")
 
 		if err != nil {
-			c.printError(err)
+			clearScreen()
+			printError(err)
+			c.waitForEnter()
 			continue
 		}
+
+		clearScreen()
 
 		switch action {
 		case 1:
-			err = c.handleCreateTask()
+			c.handleCreateTask()
 		case 2:
 			c.handleShowAllTasks()
 		case 3:
-			err = c.handleShowTasksByArea()
+			c.handleShowTasksByArea()
 		case 4:
-			err = c.handleFindTaskByID()
+			c.handleFindTaskByID()
 		case 5:
-			err = c.handleCompleteTask()
+			c.handleCompleteTask()
 		case 6:
-			err = c.handleChangeTaskPriority()
+			c.handleChangeTaskPriority()
 		case 7:
-			err = c.handleDeleteTask()
+			c.handleDeleteTask()
 		case 8:
 			c.showDashboard()
 		case 0:
-			c.printInfo("Goodbye!")
+			printInfo("Goodbye!")
 			return
 		default:
-			c.printInfo("Unknown action")
+			printInfo("Unknown action")
 		}
 
-		if err != nil {
-			c.printError(err)
-			continue
-		}
+		c.waitForEnter()
 	}
 }

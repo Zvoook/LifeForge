@@ -9,6 +9,7 @@ var (
 	ErrInvalidStatus           = errors.New("invalid task status")
 	ErrInvalidPriority         = errors.New("priority must be between 1 and 10")
 	ErrInvalidEstimatedMinutes = errors.New("estimated minutes must be greater than 0")
+	ErrUnknownValue            = errors.New("unknown value")
 	ErrTaskNotFound            = errors.New("task not found")
 	ErrTaskAlreadyCompleted    = errors.New("task is already completed")
 )

@@ -9,15 +9,15 @@ type Task struct {
 	Area             Area
 	Title            string
 	Status           Status
-	Priority         uint8
-	EstimatedMinutes uint32
+	Priority         int
+	EstimatedMinutes int
 }
 
 func (t *Task) Complete() {
 	t.Status = done
 }
 
-func (t *Task) ChangePriority(priority uint8) {
+func (t *Task) ChangePriority(priority int) {
 	t.Priority = priority
 }
 
