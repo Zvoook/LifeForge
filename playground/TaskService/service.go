@@ -8,18 +8,18 @@ func NewTaskService(r TaskRepository) TaskService {
 	return TaskService{Repository: r}
 }
 
-func (s *TaskService) CreateTask(title string, area Area, priority uint8, estimatedMinutes uint32) error {
+func (s *TaskService) CreateTask(title string, area Area, priority uint8, estimatedMinutes uint32) (Task, error) {
 	if !validateTitle(title) {
-		return ErrInvalidTitle
+		return Task{}, ErrInvalidTitle
 	}
 	if !validateArea(area) {
-		return ErrInvalidArea
+		return Task{}, ErrInvalidArea
 	}
 	if !validatePriority(priority) {
-		return ErrInvalidPriority
+		return Task{}, ErrInvalidPriority
 	}
 	if !validateEstimatedMinutes(estimatedMinutes) {
-		return ErrInvalidEstimatedMinutes
+		return Task{}, ErrInvalidEstimatedMinutes
 	}
 
 	task := Task{
@@ -30,8 +30,10 @@ func (s *TaskService) CreateTask(title string, area Area, priority uint8, estima
 		EstimatedMinutes: estimatedMinutes,
 	}
 	err := s.Repository.Save(&task)
-
-	return err
+	if err != nil {
+		return Task{}, err
+	}
+	return task, nil
 }
 
 func (s *TaskService) GetTaskById(id uint32) (Task, error) {

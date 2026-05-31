@@ -37,15 +37,15 @@ func (l *Line) Length() int32 {
 	return l.len
 }
 
-func (l *Line) isPositiveDirection() int8 {
-	if l.Start.X < l.End.X {
-		return 1 // positive x direction
-	} else if l.Start.X > l.End.X {
-		return -1 // negative x direction
-	} else {
-		return 0 // no x movement
-	}
-}
+// func (l *Line) isPositiveDirection() int8 {
+// 	if l.Start.X < l.End.X {
+// 		return 1 // positive x direction
+// 	} else if l.Start.X > l.End.X {
+// 		return -1 // negative x direction
+// 	} else {
+// 		return 0 // no x movement
+// 	}
+// }
 
 func main() {
 	// var slice []int = []int{4,5,6}

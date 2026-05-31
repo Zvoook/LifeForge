@@ -29,6 +29,6 @@ func main() {
 	// _, err = service.GetTaskById(999)
 	// fmt.Println(err)
 
-	cli := NewCLI(service)
+	cli := NewCLI(&service)
 	cli.run()
 }
