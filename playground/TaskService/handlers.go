@@ -149,5 +149,63 @@ func (c *CLI) handleDeleteTask() {
 }
 
 func (c *CLI) showDashboard() {
-	printInfo("Not implemented yet")
+	tasks := c.Service.GetAllTasks()
+	var todo_cnt, completed_cnt, blocked_cnt, cancelled_cnt, in_progress_cnt int
+	var totalTimeCount, highPriorityTaskCount int
+	var backend_cnt, english_cnt, algorithms_cnt, guitar_cnt, university_cnt int
+
+	for i := 0; i < len(tasks); i++ {
+		totalTimeCount += tasks[i].EstimatedMinutes
+
+		if tasks[i].Priority >= 8 {
+			highPriorityTaskCount++
+		}
+
+		switch tasks[i].Status {
+		case todo:
+			todo_cnt++
+		case done:
+			completed_cnt++
+		case blocked:
+			blocked_cnt++
+		case cancelled:
+			cancelled_cnt++
+		case in_progress:
+			in_progress_cnt++
+		}
+
+		switch tasks[i].Area {
+		case Backend:
+			backend_cnt++
+		case English:
+			english_cnt++
+		case Algorithms:
+			algorithms_cnt++
+		case Guitar:
+			guitar_cnt++
+		case University:
+			university_cnt++
+		}
+	}
+
+	fmt.Printf("%sLifeForge Dashboard%s\n\n", Yellow, ResetColor)
+
+	fmt.Printf("Total tasks: %d\n", len(tasks))
+	fmt.Printf("Completed: %d\n", completed_cnt)
+	fmt.Printf("To Do: %d\n", todo_cnt)
+	fmt.Printf("In Progress: %d\n", in_progress_cnt)
+	fmt.Printf("Blocked: %d\n", blocked_cnt)
+	fmt.Printf("Cancelled: %d\n", cancelled_cnt)
+	fmt.Print("\n")
+
+	fmt.Printf("Total estimated time: %d\n", totalTimeCount)
+	fmt.Printf("High priority tasks: %d\n", highPriorityTaskCount)
+	fmt.Print("\n")
+
+	fmt.Printf("Tasks by area:\n")
+	fmt.Printf("Backend: %d\n", backend_cnt)
+	fmt.Printf("English: %d\n", english_cnt)
+	fmt.Printf("Algorithms: %d\n", algorithms_cnt)
+	fmt.Printf("Guitar: %d\n", guitar_cnt)
+	fmt.Printf("University: %d\n", university_cnt)
 }

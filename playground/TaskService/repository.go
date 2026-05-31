@@ -1,5 +1,7 @@
 package main
 
+import "sort"
+
 type TaskRepository interface {
 	GetId() uint32
 	Save(task *Task) error
@@ -42,25 +44,33 @@ func (r *InMemoryTaskRepository) FindById(id uint32) (Task, error) {
 }
 
 func (r *InMemoryTaskRepository) FindAll() []Task {
-	founded := make([]Task, 0, len(r.tasks))
+	tasks := make([]Task, 0, len(r.tasks))
 
 	for _, task := range r.tasks {
-		founded = append(founded, task)
+		tasks = append(tasks, task)
 	}
 
-	return founded
+	sort.Slice(tasks, func(i, j int) bool {
+		return tasks[i].ID < tasks[j].ID
+	})
+
+	return tasks
 }
 
 func (r *InMemoryTaskRepository) FindByArea(a Area) []Task {
-	founded := make([]Task, 0, len(r.tasks))
+	tasks := make([]Task, 0, len(r.tasks))
 
 	for _, task := range r.tasks {
 		if task.Area == a {
-			founded = append(founded, task)
+			tasks = append(tasks, task)
 		}
 	}
 
-	return founded
+	sort.Slice(tasks, func(i, j int) bool {
+		return tasks[i].ID < tasks[j].ID
+	})
+
+	return tasks
 }
 
 func (r *InMemoryTaskRepository) Update(t *Task) error {
