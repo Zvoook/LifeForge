@@ -12,4 +12,5 @@ var (
 	ErrUnknownValue            = errors.New("unknown value")
 	ErrTaskNotFound            = errors.New("task not found")
 	ErrTaskAlreadyCompleted    = errors.New("task is already completed")
+	ErrUnknownAction           = errors.New("unknown action")
 )

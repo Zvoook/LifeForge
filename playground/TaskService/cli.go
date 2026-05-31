@@ -51,7 +51,7 @@ func (c *CLI) run() {
 			printInfo("Goodbye!")
 			return
 		default:
-			printInfo("Unknown action")
+			printError(ErrUnknownAction)
 		}
 
 		c.waitForEnter()

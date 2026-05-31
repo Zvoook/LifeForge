@@ -30,15 +30,15 @@ func (c *CLI) waitForEnter() {
 }
 
 func printSuccess(prompt string) {
-	fmt.Printf("%s✓ %s%s\n", Green, ResetColor, prompt)
+	fmt.Printf("%s✓ %s%s\n", Green, prompt, ResetColor)
 }
 
 func printError(err error) {
 	if err != nil {
-		fmt.Printf("%s✗ Error: %s%v\n", Red, ResetColor, err)
+		fmt.Printf("%s✗ Error: %s%v\n", Red, err, ResetColor)
 	}
 }
 
 func printInfo(prompt string) {
-	fmt.Printf("%s[i] %s%s\n", Blue, ResetColor, prompt)
+	fmt.Printf("%s[i] %s%s\n", Blue, prompt, ResetColor)
 }
