@@ -47,6 +47,8 @@ func (c *CLI) run() {
 			c.handleDeleteTask()
 		case 8:
 			c.showDashboard()
+		case 9:
+			c.clearAll()
 		case 0:
 			printInfo("Goodbye!")
 			return

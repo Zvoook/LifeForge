@@ -3,6 +3,7 @@ package main
 import "sort"
 
 type TaskRepository interface {
+	Reset()
 	GetId() uint32
 	Save(task *Task) error
 	FindById(id uint32) (Task, error)
@@ -14,16 +15,41 @@ type TaskRepository interface {
 
 type InMemoryTaskRepository struct {
 	tasks  map[uint32]Task
-	nextId uint32
+	nextID uint32
 }
 
 func NewRepository() InMemoryTaskRepository {
-	return InMemoryTaskRepository{tasks: make(map[uint32]Task), nextId: 0}
+	return InMemoryTaskRepository{tasks: make(map[uint32]Task), nextID: 0}
+}
+
+func NewRepositoryFromTasks(tasks []Task) InMemoryTaskRepository {
+	repository := InMemoryTaskRepository{
+		tasks:  make(map[uint32]Task),
+		nextID: 1,
+	}
+
+	var maxID uint32
+
+	for _, task := range tasks {
+		repository.tasks[task.ID] = task
+
+		if task.ID > maxID {
+			maxID = task.ID
+		}
+	}
+
+	repository.nextID = maxID + 1
+	return repository
+}
+
+func (r *InMemoryTaskRepository) Reset() {
+	r.tasks = make(map[uint32]Task)
+	r.nextID = 0
 }
 
 func (r *InMemoryTaskRepository) GetId() uint32 {
-	r.nextId++
-	return r.nextId
+	r.nextID++
+	return r.nextID
 }
 
 func (r *InMemoryTaskRepository) Save(t *Task) error {

@@ -33,6 +33,12 @@ func (c *CLI) handleCreateTask() {
 		return
 	}
 
+	err = SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	if err != nil {
+		printError(err)
+		return
+	}
+
 	fmt.Printf("\nCreated: \n%v\n", task)
 }
 
@@ -100,6 +106,12 @@ func (c *CLI) handleCompleteTask() {
 		return
 	}
 
+	err = SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	if err != nil {
+		printError(err)
+		return
+	}
+
 	printSuccess("Task completed")
 }
 
@@ -129,6 +141,12 @@ func (c *CLI) handleChangeTaskPriority() {
 		return
 	}
 
+	err = SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	if err != nil {
+		printError(err)
+		return
+	}
+
 	printSuccess("Priority updated")
 }
 
@@ -140,6 +158,12 @@ func (c *CLI) handleDeleteTask() {
 	}
 
 	err = c.Service.DeleteTask(id)
+	if err != nil {
+		printError(err)
+		return
+	}
+
+	err = SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
 	if err != nil {
 		printError(err)
 		return
@@ -208,4 +232,14 @@ func (c *CLI) showDashboard() {
 	fmt.Printf("Algorithms: %d\n", algorithms_cnt)
 	fmt.Printf("Guitar: %d\n", guitar_cnt)
 	fmt.Printf("University: %d\n", university_cnt)
+}
+
+func (c *CLI) clearAll() {
+	c.Service.ClearAll()
+	err := SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	if err != nil {
+		printError(err)
+		return
+	}
+	printSuccess("All tasks cleared")
 }

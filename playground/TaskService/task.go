@@ -5,12 +5,12 @@ import (
 )
 
 type Task struct {
-	ID               uint32
-	Area             Area
-	Title            string
-	Status           Status
-	Priority         int
-	EstimatedMinutes int
+	ID               uint32 `json:"id"`
+	Area             Area   `json:"area"`
+	Title            string `json:"title"`
+	Status           Status `json:"status"`
+	Priority         int    `json:"priority"`
+	EstimatedMinutes int    `json:"estimatedMinutes"`
 }
 
 func (t *Task) Complete() {
