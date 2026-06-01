@@ -1,9 +1,11 @@
-package main
+package cli
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/Zvoook/lifeforge/internal/task"
 )
 
 func (c *CLI) readLine(prompt string) (string, error) {
@@ -31,7 +33,7 @@ func (c *CLI) readInt(prompt string) (int, error) {
 	digit, err := strconv.Atoi(str)
 
 	if err != nil {
-		return 0, ErrUnknownValue
+		return 0, task.ErrUnknownValue
 	}
 
 	return digit, nil
@@ -44,7 +46,7 @@ func (c *CLI) readID() (uint32, error) {
 		return 0, err
 	}
 	if id <= 0 {
-		return 0, ErrInvalidId
+		return 0, task.ErrInvalidId
 	}
 
 	return uint32(id), nil
@@ -57,7 +59,7 @@ func (c *CLI) readTitle() (string, error) {
 		return "", err
 	}
 	if t == "" {
-		return "", ErrInvalidTitle
+		return "", task.ErrInvalidTitle
 	}
 
 	return t, nil
@@ -69,8 +71,8 @@ func (c *CLI) readPriority() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	if !validatePriority(p) {
-		return 0, ErrInvalidPriority
+	if !task.ValidatePriority(p) {
+		return 0, task.ErrInvalidPriority
 	}
 
 	return p, nil
@@ -82,33 +84,33 @@ func (c *CLI) readEstimatedMinutes() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	if !validateEstimatedMinutes(em) {
-		return 0, ErrInvalidEstimatedMinutes
+	if !task.ValidateEstimatedMinutes(em) {
+		return 0, task.ErrInvalidEstimatedMinutes
 	}
 
 	return em, nil
 }
 
-func (c *CLI) readArea() (Area, error) {
+func (c *CLI) readArea() (task.Area, error) {
 	printInfo("Areas: \n1. Backend \n2. English \n3. Guitar \n4. Algorithms \n5. University\n")
 	a, err := c.readInt("Choose area: ")
 
 	if err != nil {
-		return Unknown, ErrInvalidArea
+		return task.Unknown, task.ErrInvalidArea
 	}
 
 	switch a {
 	case 1:
-		return Backend, nil
+		return task.Backend, nil
 	case 2:
-		return English, nil
+		return task.English, nil
 	case 3:
-		return Guitar, nil
+		return task.Guitar, nil
 	case 4:
-		return Algorithms, nil
+		return task.Algorithms, nil
 	case 5:
-		return University, nil
+		return task.University, nil
 	default:
-		return Unknown, ErrInvalidArea
+		return task.Unknown, task.ErrInvalidArea
 	}
 }

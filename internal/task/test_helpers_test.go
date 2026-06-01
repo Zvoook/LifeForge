@@ -1,4 +1,4 @@
-package main
+package task
 
 func NewTestService() TaskService {
 	repository := NewRepository()
@@ -9,7 +9,7 @@ func NewTestTask(title string) Task {
 	return Task{
 		Area:             Backend,
 		Title:            title,
-		Status:           todo,
+		Status:           Todo,
 		Priority:         5,
 		EstimatedMinutes: 30,
 	}

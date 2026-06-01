@@ -1,4 +1,4 @@
-package main
+package task
 
 import "testing"
 
@@ -27,7 +27,7 @@ func TestValidateTitle(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			result := validateTitle(test.title)
+			result := ValidateTitle(test.title)
 
 			if result != test.expected {
 				t.Fatalf("expected %v, got %v", test.expected, result)
@@ -66,7 +66,7 @@ func TestValidateArea(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			result := validateArea(test.area)
+			result := ValidateArea(test.area)
 
 			if result != test.expected {
 				t.Fatalf("expected %v, got %v", test.expected, result)
@@ -115,7 +115,7 @@ func TestValidatePriority(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			result := validatePriority(test.priority)
+			result := ValidatePriority(test.priority)
 
 			if result != test.expected {
 				t.Fatalf("expected %v, got %v", test.expected, result)
@@ -154,7 +154,7 @@ func TestValidateEstimatedMinutes(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			result := validateEstimatedMinutes(test.estimatedMinutes)
+			result := ValidateEstimatedMinutes(test.estimatedMinutes)
 
 			if result != test.expected {
 				t.Fatalf("expected %v, got %v", test.expected, result)

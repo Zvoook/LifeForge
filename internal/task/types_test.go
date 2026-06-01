@@ -1,4 +1,4 @@
-package main
+package task
 
 import "testing"
 
@@ -112,28 +112,28 @@ func TestStatusString(t *testing.T) {
 		expected string
 	}{
 		{
-			name:     "todo status",
-			status:   todo,
+			name:     "Todo status",
+			status:   Todo,
 			expected: "To Do",
 		},
 		{
 			name:     "complete status",
-			status:   done,
+			status:   Done,
 			expected: "Done",
 		},
 		{
-			name:     "in_progress status",
-			status:   in_progress,
+			name:     "In_progress status",
+			status:   In_progress,
 			expected: "In Progress",
 		},
 		{
-			name:     "blocked status",
-			status:   blocked,
+			name:     "Blocked status",
+			status:   Blocked,
 			expected: "Blocked",
 		},
 		{
-			name:     "cancelled status",
-			status:   cancelled,
+			name:     "Cancelled status",
+			status:   Cancelled,
 			expected: "Cancelled",
 		},
 		{
@@ -166,28 +166,28 @@ func TestAStatusIsValid(t *testing.T) {
 		expected bool
 	}{
 		{
-			name:     "todo status",
-			status:   todo,
+			name:     "Todo status",
+			status:   Todo,
 			expected: true,
 		},
 		{
 			name:     "complete status",
-			status:   done,
+			status:   Done,
 			expected: true,
 		},
 		{
-			name:     "in_progress status",
-			status:   in_progress,
+			name:     "In_progress status",
+			status:   In_progress,
 			expected: true,
 		},
 		{
-			name:     "blocked status",
-			status:   blocked,
+			name:     "Blocked status",
+			status:   Blocked,
 			expected: true,
 		},
 		{
-			name:     "cancelled status",
-			status:   cancelled,
+			name:     "Cancelled status",
+			status:   Cancelled,
 			expected: true,
 		},
 		{

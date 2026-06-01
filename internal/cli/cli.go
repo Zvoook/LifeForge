@@ -1,20 +1,27 @@
-package main
+package cli
 
 import (
 	"bufio"
 	"os"
+
+	"github.com/Zvoook/lifeforge/internal/task"
 )
 
 type CLI struct {
-	Reader  *bufio.Reader
-	Service TaskService
+	Reader       *bufio.Reader
+	Service      *task.TaskService
+	SaveFileName string
 }
 
-func NewCLI(s *TaskService) CLI {
-	return CLI{Reader: bufio.NewReader(os.Stdin), Service: *s}
+func NewCLI(service *task.TaskService, saveFileName string) CLI {
+	return CLI{
+		Reader:       bufio.NewReader(os.Stdin),
+		Service:      service,
+		SaveFileName: saveFileName,
+	}
 }
 
-func (c *CLI) run() {
+func (c *CLI) Run() {
 	for {
 		clearScreen()
 		printMenu()
@@ -53,7 +60,7 @@ func (c *CLI) run() {
 			printInfo("Goodbye!")
 			return
 		default:
-			printError(ErrUnknownAction)
+			printError(task.ErrUnknownAction)
 		}
 
 		c.waitForEnter()

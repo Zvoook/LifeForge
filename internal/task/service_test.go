@@ -1,4 +1,4 @@
-package main
+package task
 
 import "testing"
 
@@ -83,8 +83,8 @@ func TestCompleteTaskChangeTaskStatus(t *testing.T) {
 
 	foundedTask, _ = service.GetTaskById(task.ID)
 	statusAfterComplete := foundedTask.Status
-	if statusAfterComplete != done {
-		t.Fatalf("expected status done after completing, got %v", statusAfterComplete)
+	if statusAfterComplete != Done {
+		t.Fatalf("expected status Done after completing, got %v", statusAfterComplete)
 	}
 	if statusBeforeComplete == statusAfterComplete {
 		t.Fatalf("expected changing status after completing, got the same status")

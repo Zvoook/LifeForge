@@ -1,4 +1,4 @@
-package main
+package task
 
 import (
 	"os"
@@ -11,22 +11,8 @@ func TestSaveAndLoadTasksFromFile(t *testing.T) {
 	filename := filepath.Join(dir, "save.json")
 
 	tasks := []Task{
-		{
-			ID:               1,
-			Area:             Backend,
-			Title:            "Learn JSON tests",
-			Status:           todo,
-			Priority:         8,
-			EstimatedMinutes: 60,
-		},
-		{
-			ID:               2,
-			Area:             English,
-			Title:            "Practice English",
-			Status:           done,
-			Priority:         6,
-			EstimatedMinutes: 30,
-		},
+		NewTestTask("task_1"),
+		NewTestTask("task_2"),
 	}
 
 	err := SaveTasksToFile(tasks, filename)
