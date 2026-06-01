@@ -106,3 +106,43 @@ func TestRepositoryFindAllReturnsTasksSortedByID(t *testing.T) {
 		t.Fatalf("expected second task ID to be 2, got %d", tasks[1].ID)
 	}
 }
+
+func TestNewRepositoryFromTasksRestoresNextID(t *testing.T) {
+	tasks := []Task{
+		{
+			ID:               1,
+			Area:             Backend,
+			Title:            "Saved task 1",
+			Status:           todo,
+			Priority:         5,
+			EstimatedMinutes: 30,
+		},
+		{
+			ID:               5,
+			Area:             English,
+			Title:            "Saved task 5",
+			Status:           todo,
+			Priority:         6,
+			EstimatedMinutes: 45,
+		},
+	}
+
+	repository := NewRepositoryFromTasks(tasks)
+
+	newTask := Task{
+		Area:             Algorithms,
+		Title:            "New task",
+		Status:           todo,
+		Priority:         9,
+		EstimatedMinutes: 90,
+	}
+
+	err := repository.Save(&newTask)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if newTask.ID != 6 {
+		t.Fatalf("expected new task ID to be 6, got %d", newTask.ID)
+	}
+}
