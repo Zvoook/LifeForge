@@ -6,7 +6,7 @@ The current version is a console task manager.
 It helps create, view, update, complete and delete tasks grouped by development areas.
 
 ## Current version
-### v0.1.0 — LifeForge Task CLI
+### v0.2 — LifeForge Task CLI with JSON memory
 Implemented features:
 - create tasks
 - show all tasks
@@ -16,7 +16,8 @@ Implemented features:
 - change task priority
 - delete tasks
 - show basic dashboard
-- in-memory task repository
+- clear all tasks
+- json-memory task repository
 
 ## Development areas
 Tasks can belong to one of the following areas:
@@ -56,9 +57,8 @@ This project is currently used for learning:
 - repository/service architecture
 - CLI input/output
 - error handling
+- JSON
 
 ## Planned improvements:
-- save tasks to JSON file
-- load tasks on application start
 - add tests for service and repository layers
 - move code from playground to a production-like project structure
