@@ -80,3 +80,7 @@ func (s *TaskService) ChangePriority(id uint32, priority int) error {
 func (s *TaskService) DeleteTask(id uint32) error {
 	return s.Repository.Delete(id)
 }
+
+func (s *TaskService) ClearAll() {
+	s.Repository.Reset()
+}
