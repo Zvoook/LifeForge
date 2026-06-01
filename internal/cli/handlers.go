@@ -1,6 +1,10 @@
-package main
+package cli
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Zvoook/lifeforge/internal/task"
+)
 
 func (c *CLI) handleCreateTask() {
 	title, err := c.readTitle()
@@ -27,19 +31,19 @@ func (c *CLI) handleCreateTask() {
 		return
 	}
 
-	task, err := c.Service.CreateTask(title, area, priority, int(em))
+	foundTask, err := c.Service.CreateTask(title, area, priority, int(em))
 	if err != nil {
 		printError(err)
 		return
 	}
 
-	err = SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	err = task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
 	if err != nil {
 		printError(err)
 		return
 	}
 
-	fmt.Printf("\nCreated: \n%v\n", task)
+	fmt.Printf("\nCreated: \n%v\n", foundTask)
 }
 
 func (c *CLI) handleShowAllTasks() {
@@ -106,7 +110,7 @@ func (c *CLI) handleCompleteTask() {
 		return
 	}
 
-	err = SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	err = task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
 	if err != nil {
 		printError(err)
 		return
@@ -122,12 +126,12 @@ func (c *CLI) handleChangeTaskPriority() {
 		return
 	}
 
-	task, err := c.Service.GetTaskById(uint32(id))
+	foundTask, err := c.Service.GetTaskById(uint32(id))
 	if err != nil {
 		printError(err)
 		return
 	}
-	fmt.Printf("Task #%d has priority %d\n", id, task.Priority)
+	fmt.Printf("Task #%d has priority %d\n", id, foundTask.Priority)
 
 	p, err := c.readPriority()
 	if err != nil {
@@ -141,7 +145,7 @@ func (c *CLI) handleChangeTaskPriority() {
 		return
 	}
 
-	err = SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	err = task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
 	if err != nil {
 		printError(err)
 		return
@@ -163,7 +167,7 @@ func (c *CLI) handleDeleteTask() {
 		return
 	}
 
-	err = SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	err = task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
 	if err != nil {
 		printError(err)
 		return
@@ -186,28 +190,28 @@ func (c *CLI) showDashboard() {
 		}
 
 		switch tasks[i].Status {
-		case todo:
+		case task.Todo:
 			todo_cnt++
-		case done:
+		case task.Done:
 			completed_cnt++
-		case blocked:
+		case task.Blocked:
 			blocked_cnt++
-		case cancelled:
+		case task.Cancelled:
 			cancelled_cnt++
-		case in_progress:
+		case task.In_progress:
 			in_progress_cnt++
 		}
 
 		switch tasks[i].Area {
-		case Backend:
+		case task.Backend:
 			backend_cnt++
-		case English:
+		case task.English:
 			english_cnt++
-		case Algorithms:
+		case task.Algorithms:
 			algorithms_cnt++
-		case Guitar:
+		case task.Guitar:
 			guitar_cnt++
-		case University:
+		case task.University:
 			university_cnt++
 		}
 	}
@@ -236,7 +240,7 @@ func (c *CLI) showDashboard() {
 
 func (c *CLI) clearAll() {
 	c.Service.ClearAll()
-	err := SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	err := task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
 	if err != nil {
 		printError(err)
 		return

@@ -1,4 +1,4 @@
-package main
+package task
 
 import "strings"
 
@@ -13,23 +13,23 @@ func NewTaskService(r TaskRepository) TaskService {
 func (s *TaskService) CreateTask(title string, area Area, priority int, estimatedMinutes int) (Task, error) {
 	title = strings.TrimSpace(title)
 
-	if !validateTitle(title) {
+	if !ValidateTitle(title) {
 		return Task{}, ErrInvalidTitle
 	}
-	if !validateArea(area) {
+	if !ValidateArea(area) {
 		return Task{}, ErrInvalidArea
 	}
-	if !validatePriority(priority) {
+	if !ValidatePriority(priority) {
 		return Task{}, ErrInvalidPriority
 	}
-	if !validateEstimatedMinutes(estimatedMinutes) {
+	if !ValidateEstimatedMinutes(estimatedMinutes) {
 		return Task{}, ErrInvalidEstimatedMinutes
 	}
 
 	task := Task{
 		Title:            title,
 		Area:             area,
-		Status:           todo,
+		Status:           Todo,
 		Priority:         priority,
 		EstimatedMinutes: estimatedMinutes,
 	}
@@ -49,7 +49,7 @@ func (s *TaskService) GetAllTasks() []Task {
 }
 
 func (s *TaskService) GetTasksByArea(area Area) ([]Task, error) {
-	if validateArea(area) {
+	if ValidateArea(area) {
 		return s.Repository.FindByArea(area), nil
 	}
 	return make([]Task, 0), ErrInvalidArea
@@ -60,7 +60,7 @@ func (s *TaskService) CompleteTask(id uint32) error {
 	if err != nil {
 		return err
 	}
-	if task.Status != done {
+	if task.Status != Done {
 		task.Complete()
 		err := s.Repository.Update(&task)
 		return err
@@ -69,7 +69,7 @@ func (s *TaskService) CompleteTask(id uint32) error {
 }
 
 func (s *TaskService) ChangePriority(id uint32, priority int) error {
-	if !validatePriority(priority) {
+	if !ValidatePriority(priority) {
 		return ErrInvalidPriority
 	}
 	task, err := s.Repository.FindById(id)

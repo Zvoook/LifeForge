@@ -1,26 +1,26 @@
-package main
+package task
 
 type Status int
 
 const (
-	todo Status = iota
-	in_progress
-	done
-	blocked
-	cancelled
+	Todo Status = iota
+	In_progress
+	Done
+	Blocked
+	Cancelled
 )
 
 func (s Status) String() string {
 	switch s {
-	case todo:
+	case Todo:
 		return "To Do"
-	case in_progress:
+	case In_progress:
 		return "In Progress"
-	case done:
+	case Done:
 		return "Done"
-	case blocked:
+	case Blocked:
 		return "Blocked"
-	case cancelled:
+	case Cancelled:
 		return "Cancelled"
 	default:
 		return "Unknown Status"
@@ -29,7 +29,7 @@ func (s Status) String() string {
 
 func (s *Status) IsValid() bool {
 	switch *s {
-	case todo, in_progress, done, blocked, cancelled:
+	case Todo, In_progress, Done, Blocked, Cancelled:
 		return true
 	default:
 		return false

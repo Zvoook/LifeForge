@@ -1,4 +1,4 @@
-package main
+package task
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ type Task struct {
 }
 
 func (t *Task) Complete() {
-	t.Status = done
+	t.Status = Done
 }
 
 func (t *Task) ChangePriority(priority int) {
