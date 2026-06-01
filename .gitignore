@@ -1,3 +1,7 @@
 builds/
 *.exe
+<<<<<<< HEAD
 save.json
+=======
+save.json
+>>>>>>> 2dd14814827fe7a2d8a4f38b0189da1fd7dff434
