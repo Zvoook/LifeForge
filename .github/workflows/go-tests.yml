@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+      - ci/**
+      - feature/**
+      - refactor/**
       - learning/**
   pull_request:
     branches:
@@ -11,6 +14,7 @@ on:
 
 jobs:
   test:
+    name: Run Go tests
     runs-on: ubuntu-latest
 
     steps:
@@ -26,4 +30,4 @@ jobs:
         run: go mod download
 
       - name: Run tests
-        run: go test ./playground/TaskService
+        run: go test ./...
