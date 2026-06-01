@@ -19,7 +19,10 @@ type InMemoryTaskRepository struct {
 }
 
 func NewRepository() InMemoryTaskRepository {
-	return InMemoryTaskRepository{tasks: make(map[uint32]Task), nextID: 1}
+	return InMemoryTaskRepository{
+		tasks:  make(map[uint32]Task),
+		nextID: 1,
+	}
 }
 
 func NewRepositoryFromTasks(tasks []Task) InMemoryTaskRepository {
@@ -39,17 +42,45 @@ func NewRepositoryFromTasks(tasks []Task) InMemoryTaskRepository {
 	}
 
 	repository.nextID = maxID + 1
+
 	return repository
+}
+
+func NewRepositoryFromFile(filename string) (InMemoryTaskRepository, error) {
+	tasks, err := LoadTasksFromFile(filename)
+	if err != nil {
+		return InMemoryTaskRepository{}, err
+	}
+
+	repository := InMemoryTaskRepository{
+		tasks:  make(map[uint32]Task),
+		nextID: 1,
+	}
+
+	var maxID uint32
+
+	for _, task := range tasks {
+		repository.tasks[task.ID] = task
+
+		if task.ID > maxID {
+			maxID = task.ID
+		}
+	}
+
+	repository.nextID = maxID + 1
+
+	return repository, nil
 }
 
 func (r *InMemoryTaskRepository) Reset() {
 	r.tasks = make(map[uint32]Task)
-	r.nextID = 0
+	r.nextID = 1
 }
 
 func (r *InMemoryTaskRepository) GetId() uint32 {
+	id := r.nextID
 	r.nextID++
-	return r.nextID - 1
+	return id
 }
 
 func (r *InMemoryTaskRepository) Save(t *Task) error {

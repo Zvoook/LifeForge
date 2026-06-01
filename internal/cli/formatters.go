@@ -51,23 +51,23 @@ func (c *CLI) waitForEnter() {
 	c.readLine(pressEnterRequire)
 }
 
-func printSuccess(prompt string) {
+func PrintSuccess(prompt string) {
 	fmt.Printf("%s✓ %s%s\n", Green, prompt, ResetColor)
 }
 
-func printError(err error) {
+func PrintError(err error) {
 	if err != nil {
 		fmt.Printf("%s✗ Error: %v%s\n", Red, err, ResetColor)
 	}
 }
 
-func printInfo(prompt string) {
+func PrintInfo(prompt string) {
 	fmt.Printf("%s[i] %s%s\n", Blue, prompt, ResetColor)
 }
 
-func printTasksTable(tasks []task.Task) {
+func PrintTasksTable(tasks []task.Task) {
 	if len(tasks) == 0 {
-		printInfo("No tasks found")
+		PrintInfo("No tasks found")
 		return
 	}
 

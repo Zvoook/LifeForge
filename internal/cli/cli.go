@@ -30,7 +30,7 @@ func (c *CLI) Run() {
 
 		if err != nil {
 			clearScreen()
-			printError(err)
+			PrintError(err)
 			c.waitForEnter()
 			continue
 		}
@@ -59,10 +59,10 @@ func (c *CLI) Run() {
 		case 10:
 			c.clearAll()
 		case 0:
-			printInfo("Goodbye!")
+			PrintInfo("Goodbye!")
 			return
 		default:
-			printError(task.ErrUnknownAction)
+			PrintError(task.ErrUnknownAction)
 		}
 
 		c.waitForEnter()

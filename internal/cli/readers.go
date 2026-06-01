@@ -108,7 +108,7 @@ func (c *CLI) readEstimatedMinutes() (int, error) {
 }
 
 func (c *CLI) readArea() (task.Area, error) {
-	printInfo(AreaMenu)
+	PrintInfo(AreaMenu)
 	a, err := c.readInt("Choose area: ")
 
 	if err != nil {
@@ -132,7 +132,7 @@ func (c *CLI) readArea() (task.Area, error) {
 }
 
 func (c *CLI) readStatus() (task.Status, error) {
-	printInfo(StatusMenu)
+	PrintInfo(StatusMenu)
 	a, err := c.readInt("Choose status: ")
 
 	if err != nil {
