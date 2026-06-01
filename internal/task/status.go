@@ -8,6 +8,7 @@ const (
 	Done
 	Blocked
 	Cancelled
+	UnknownStatus
 )
 
 func (s Status) String() string {

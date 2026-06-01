@@ -49,6 +49,11 @@ func (c *CLI) handleCreateTask() {
 func (c *CLI) handleShowAllTasks() {
 	tasks := c.Service.GetAllTasks()
 
+	if len(tasks) == 0 {
+		printInfo("No tasks found")
+		return
+	}
+
 	for _, task := range tasks {
 		fmt.Println(task)
 	}
@@ -56,15 +61,58 @@ func (c *CLI) handleShowAllTasks() {
 }
 
 func (c *CLI) handleShowTasksByArea() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		printInfo("Nothing to search")
+		return
+	}
+
 	area, err := c.readArea()
 	if err != nil {
 		printError(err)
 		return
 	}
 
-	tasks, err := c.Service.GetTasksByArea(area)
+	tasks, err = c.Service.GetTasksByArea(area)
 	if err != nil {
 		printError(err)
+		return
+	}
+
+	if len(tasks) == 0 {
+		printInfo("No tasks found")
+		return
+	}
+
+	for _, task := range tasks {
+		fmt.Println(task)
+	}
+	fmt.Print("\n")
+}
+
+func (c *CLI) handleShowTasksByStatus() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		printInfo("Nothing to search")
+		return
+	}
+
+	status, err := c.readStatus()
+	if err != nil {
+		printError(err)
+		return
+	}
+
+	tasks, err = c.Service.GetTasksByStatus(status)
+	if err != nil {
+		printError(err)
+		return
+	}
+
+	if len(tasks) == 0 {
+		printInfo("No tasks found")
 		return
 	}
 
@@ -75,6 +123,13 @@ func (c *CLI) handleShowTasksByArea() {
 }
 
 func (c *CLI) handleFindTaskByID() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		printInfo("Nothing to search")
+		return
+	}
+
 	id, err := c.readID()
 	if err != nil {
 		printError(err)
@@ -92,6 +147,13 @@ func (c *CLI) handleFindTaskByID() {
 }
 
 func (c *CLI) handleCompleteTask() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		printInfo("Nothing to update")
+		return
+	}
+
 	id, err := c.readID()
 	if err != nil {
 		printError(err)
@@ -120,6 +182,13 @@ func (c *CLI) handleCompleteTask() {
 }
 
 func (c *CLI) handleChangeTaskPriority() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		printInfo("Nothing to update")
+		return
+	}
+
 	id, err := c.readID()
 	if err != nil {
 		printError(err)
@@ -155,6 +224,13 @@ func (c *CLI) handleChangeTaskPriority() {
 }
 
 func (c *CLI) handleDeleteTask() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		printInfo("Nothing to delete")
+		return
+	}
+
 	id, err := c.readID()
 	if err != nil {
 		printError(err)
@@ -178,6 +254,12 @@ func (c *CLI) handleDeleteTask() {
 
 func (c *CLI) showDashboard() {
 	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		printInfo("Nothing to visualise")
+		return
+	}
+
 	var todo_cnt, completed_cnt, blocked_cnt, cancelled_cnt, in_progress_cnt int
 	var totalTimeCount, highPriorityTaskCount int
 	var backend_cnt, english_cnt, algorithms_cnt, guitar_cnt, university_cnt int
@@ -239,6 +321,13 @@ func (c *CLI) showDashboard() {
 }
 
 func (c *CLI) clearAll() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		printInfo("Nothing to clear")
+		return
+	}
+
 	c.Service.ClearAll()
 	err := task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
 	if err != nil {

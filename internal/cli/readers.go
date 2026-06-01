@@ -8,6 +8,22 @@ import (
 	"github.com/Zvoook/lifeforge/internal/task"
 )
 
+const AreaMenu = `Areas:
+1. Backend
+2. English
+3. Guitar
+4. Algorithms
+5. University
+`
+
+const StatusMenu = `Statuses:
+1. To do
+2. In Progress
+3. Completed
+4. Cancelled
+5. Blocked
+`
+
 func (c *CLI) readLine(prompt string) (string, error) {
 	fmt.Print(prompt)
 	str, err := c.Reader.ReadString('\n')
@@ -92,11 +108,11 @@ func (c *CLI) readEstimatedMinutes() (int, error) {
 }
 
 func (c *CLI) readArea() (task.Area, error) {
-	printInfo("Areas: \n1. Backend \n2. English \n3. Guitar \n4. Algorithms \n5. University\n")
+	printInfo(AreaMenu)
 	a, err := c.readInt("Choose area: ")
 
 	if err != nil {
-		return task.Unknown, task.ErrInvalidArea
+		return task.UnknownArea, task.ErrInvalidArea
 	}
 
 	switch a {
@@ -111,6 +127,30 @@ func (c *CLI) readArea() (task.Area, error) {
 	case 5:
 		return task.University, nil
 	default:
-		return task.Unknown, task.ErrInvalidArea
+		return task.UnknownArea, task.ErrInvalidArea
+	}
+}
+
+func (c *CLI) readStatus() (task.Status, error) {
+	printInfo(StatusMenu)
+	a, err := c.readInt("Choose status: ")
+
+	if err != nil {
+		return task.UnknownStatus, task.ErrInvalidStatus
+	}
+
+	switch a {
+	case 1:
+		return task.Todo, nil
+	case 2:
+		return task.In_progress, nil
+	case 3:
+		return task.Done, nil
+	case 4:
+		return task.Cancelled, nil
+	case 5:
+		return task.Blocked, nil
+	default:
+		return task.UnknownStatus, task.ErrInvalidStatus
 	}
 }

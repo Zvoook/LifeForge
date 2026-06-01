@@ -55,6 +55,23 @@ func (s *TaskService) GetTasksByArea(area Area) ([]Task, error) {
 	return make([]Task, 0), ErrInvalidArea
 }
 
+func (s *TaskService) GetTasksByStatus(status Status) ([]Task, error) {
+	if !ValidateStatus(status) {
+		return nil, ErrInvalidStatus
+	}
+
+	tasks := s.Repository.FindAll()
+	result := make([]Task, 0)
+
+	for _, task := range tasks {
+		if task.Status == status {
+			result = append(result, task)
+		}
+	}
+
+	return result, nil
+}
+
 func (s *TaskService) CompleteTask(id uint32) error {
 	task, err := s.Repository.FindById(id)
 	if err != nil {

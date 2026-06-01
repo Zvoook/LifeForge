@@ -8,7 +8,7 @@ const (
 	Guitar
 	Algorithms
 	University
-	Unknown
+	UnknownArea
 )
 
 func (a Area) String() string {
