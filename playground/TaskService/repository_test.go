@@ -82,9 +82,15 @@ func TestRepositoryFindAllReturnsTasksSortedByID(t *testing.T) {
 }
 
 func TestNewRepositoryFromTasksRestoresNextID(t *testing.T) {
+	first := NewTestTask("Saved task 1")
+	first.ID = 1
+
+	second := NewTestTask("Saved task 5")
+	second.ID = 5
+
 	tasks := []Task{
-		NewTestTask("Saved task 1"),
-		NewTestTask("Saved task 5"),
+		first,
+		second,
 	}
 
 	repository := NewRepositoryFromTasks(tasks)
