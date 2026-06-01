@@ -19,7 +19,7 @@ type InMemoryTaskRepository struct {
 }
 
 func NewRepository() InMemoryTaskRepository {
-	return InMemoryTaskRepository{tasks: make(map[uint32]Task), nextID: 0}
+	return InMemoryTaskRepository{tasks: make(map[uint32]Task), nextID: 1}
 }
 
 func NewRepositoryFromTasks(tasks []Task) InMemoryTaskRepository {
@@ -49,7 +49,7 @@ func (r *InMemoryTaskRepository) Reset() {
 
 func (r *InMemoryTaskRepository) GetId() uint32 {
 	r.nextID++
-	return r.nextID
+	return r.nextID - 1
 }
 
 func (r *InMemoryTaskRepository) Save(t *Task) error {
