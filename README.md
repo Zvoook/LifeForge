@@ -1,12 +1,11 @@
 # LifeForge
+LifeForge is a learning Go project for managing personal development tasks from the terminal.
 
-LifeForge is a learning Go project for managing personal development tasks.
-
-The current version is a console task manager.
-It helps create, view, update, complete and delete tasks grouped by development areas.
+The current version is a console task manager with JSON-based persistence. It helps create, view, update, complete, delete and analyze tasks grouped by development areas.
 
 ## Current version
-### v0.2 — LifeForge Task CLI with JSON memory
+### v0.3 — Structured CLI project with tests
+
 Implemented features:
 - create tasks
 - show all tasks
@@ -15,9 +14,17 @@ Implemented features:
 - complete tasks
 - change task priority
 - delete tasks
-- show basic dashboard
 - clear all tasks
-- json-memory task repository
+- show basic dashboard
+- save tasks to JSON
+- load tasks from JSON on startup
+- restore task IDs after loading saved data
+- repository tests
+- service tests
+- storage tests
+- validation tests
+- area/status tests
+- production-like Go project structure
 
 ## Development areas
 Tasks can belong to one of the following areas:
@@ -27,38 +34,36 @@ Tasks can belong to one of the following areas:
 - Algorithms
 - University
 
-## Run
-
-```bash
-go run ./playground/TaskService
+## Project structure
+```text
+LifeForge/
+├── cmd/
+│   └── lifeforge-cli/
+│       └── main.go
+│
+├── internal/
+│   ├── task/
+│   │   ├── area.go
+│   │   ├── status.go
+│   │   ├── task.go
+│   │   ├── errors.go
+│   │   ├── validation.go
+│   │   ├── repository.go
+│   │   ├── service.go
+│   │   ├── storage.go
+│   │   └── *_test.go
+│   │
+│   └── cli/
+│       ├── cli.go
+│       ├── handlers.go
+│       ├── readers.go
+│       └── formatters.go
+│
+├── .github/
+│   └── workflows/
+│       └── go-tests.yml
+│
+├── .gitignore
+├── go.mod
+└── README.md
 ```
-## Build
-```bash
-go build -o builds/lifeforge-task-cli.exe ./playground/TaskService
-```
-
-## Run built executable
-```bash
-./builds/lifeforge-task-cli.exe
-```
-
-## PowerShell ANSI colors
-If colors are displayed incorrectly in PowerShell, run:
-```shell
-reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1
-```
-Then restart the terminal.
-
-## Project status
-This project is currently used for learning:
-- Go basics
-- structs and methods
-- interfaces
-- repository/service architecture
-- CLI input/output
-- error handling
-- JSON
-
-## Planned improvements:
-- add tests for service and repository layers
-- move code from playground to a production-like project structure
