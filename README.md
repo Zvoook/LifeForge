@@ -67,3 +67,117 @@ LifeForge/
 ├── go.mod
 └── README.md
 ```
+
+## Architecture
+
+The project is split into three main parts:
+
+1) cmd/lifeforge-cli
+Application entry point.
+
+Responsibilities:
+- load tasks from JSON
+- create repository
+- create service
+- create CLI
+- start the application
+
+
+2) internal/task
+Task domain and business logic.
+
+Responsibilities:
+- task entity
+- development areas
+- task statuses
+- validation
+- repository interface
+- in-memory repository
+- task service
+- JSON storage
+- unit tests
+
+
+3) internal/cli
+Console user interface.
+
+Responsibilities:
+- menu rendering
+- user input reading
+- command handlers
+- formatted output
+- saving changes after task operations
+
+## Run
+```bash
+go run ./cmd/lifeforge-cli
+```
+## Build
+```bash
+go build -o builds/lifeforge-task-cli.exe ./cmd/lifeforge-cli
+```
+
+## Run built executable
+```bash
+./builds/lifeforge-task-cli.exe
+```
+
+### On Windows PowerShell:
+```powershell
+.\builds\lifeforge-task-cli.exe
+```
+
+## Tests
+
+### Run all tests:
+
+```bash
+go test ./...
+```
+
+### Run only task package tests:
+
+```bash
+go test ./internal/task
+```
+
+## JSON storage
+
+Tasks are stored locally in "save.json"
+
+The file is ignored by Git because it contains local user data.
+
+## PowerShell ANSI colors
+
+If colors are displayed incorrectly in PowerShell, run:
+
+```powershell
+reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1
+```
+
+Then restart the terminal.
+
+## Project status
+
+This project is currently used for learning:
+- Go basics
+- structs and methods
+- interfaces
+- repository/service architecture
+- package structure
+- CLI input/output
+- error handling
+- JSON persistence
+- unit testing
+- Git workflow
+- GitHub Actions
+- Planned improvements
+- improve GitHub Actions workflow
+- add release builds
+- add better dashboard statistics
+- improve CLI UX
+- add task filtering by status and priority
+- add task editing
+- add due dates
+- add recurring tasks
+- add more tests for CLI-independent logic
