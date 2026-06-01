@@ -4,14 +4,7 @@ import "testing"
 
 func TestRepositorySaveAssignsID(t *testing.T) {
 	repository := NewRepository()
-
-	task := Task{
-		Area:             Backend,
-		Title:            "Learn GO tests",
-		Status:           todo,
-		Priority:         8,
-		EstimatedMinutes: 60,
-	}
+	task := NewTestTask("Learn GO tests")
 
 	err := repository.Save(&task)
 	if err != nil {
@@ -26,13 +19,7 @@ func TestRepositorySaveAssignsID(t *testing.T) {
 func TestRepositoryFindByIDReturnsSavedTasks(t *testing.T) {
 	repository := NewRepository()
 
-	task := Task{
-		Area:             Backend,
-		Title:            "Learn GO tests #2",
-		Status:           todo,
-		Priority:         7,
-		EstimatedMinutes: 60,
-	}
+	task := NewTestTask("Learn GO tests")
 
 	err := repository.Save(&task)
 	if err != nil {
@@ -66,21 +53,8 @@ func TestRepositoryFindByIDWhenTaskDoesNotExist(t *testing.T) {
 func TestRepositoryFindAllReturnsTasksSortedByID(t *testing.T) {
 	repository := NewRepository()
 
-	firstTask := Task{
-		Area:             Backend,
-		Title:            "First task",
-		Status:           todo,
-		Priority:         5,
-		EstimatedMinutes: 30,
-	}
-
-	secondTask := Task{
-		Area:             English,
-		Title:            "Second task",
-		Status:           todo,
-		Priority:         6,
-		EstimatedMinutes: 40,
-	}
+	firstTask := NewTestTask("First task")
+	secondTask := NewTestTask("Second task")
 
 	err := repository.Save(&firstTask)
 	if err != nil {
@@ -109,33 +83,13 @@ func TestRepositoryFindAllReturnsTasksSortedByID(t *testing.T) {
 
 func TestNewRepositoryFromTasksRestoresNextID(t *testing.T) {
 	tasks := []Task{
-		{
-			ID:               1,
-			Area:             Backend,
-			Title:            "Saved task 1",
-			Status:           todo,
-			Priority:         5,
-			EstimatedMinutes: 30,
-		},
-		{
-			ID:               5,
-			Area:             English,
-			Title:            "Saved task 5",
-			Status:           todo,
-			Priority:         6,
-			EstimatedMinutes: 45,
-		},
+		NewTestTask("Saved task 1"),
+		NewTestTask("Saved task 5"),
 	}
 
 	repository := NewRepositoryFromTasks(tasks)
 
-	newTask := Task{
-		Area:             Algorithms,
-		Title:            "New task",
-		Status:           todo,
-		Priority:         9,
-		EstimatedMinutes: 90,
-	}
+	newTask := NewTestTask("New task")
 
 	err := repository.Save(&newTask)
 	if err != nil {

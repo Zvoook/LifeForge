@@ -3,8 +3,7 @@ package main
 import "testing"
 
 func TestCanNotCreateTaskWithEmptyTitle(t *testing.T) {
-	r := NewRepository()
-	service := NewTaskService(&r)
+	service := NewTestService()
 
 	task, err := service.CreateTask("", Backend, 10, 60)
 	if err == nil {
@@ -19,8 +18,7 @@ func TestCanNotCreateTaskWithEmptyTitle(t *testing.T) {
 }
 
 func TestCanNotCreateTaskWithInvalidArea(t *testing.T) {
-	r := NewRepository()
-	service := NewTaskService(&r)
+	service := NewTestService()
 
 	_, err := service.CreateTask("task with invalid area",
 		15 /*number 15 out of range in areas' list*/, 10, 60)
@@ -33,8 +31,7 @@ func TestCanNotCreateTaskWithInvalidArea(t *testing.T) {
 }
 
 func TestCanNotCompleteTaskTwice(t *testing.T) {
-	r := NewRepository()
-	service := NewTaskService(&r)
+	service := NewTestService()
 
 	task, err := service.CreateTask("Example task", Backend, 10, 60)
 	if err != nil {
@@ -56,8 +53,7 @@ func TestCanNotCompleteTaskTwice(t *testing.T) {
 }
 
 func TestCanNotCreateTaskWithInvalidPriority(t *testing.T) {
-	r := NewRepository()
-	service := NewTaskService(&r)
+	service := NewTestService()
 
 	_, err := service.CreateTask("task with invalid area",
 		Backend, 12 /*priority out of range 1, ..., 10*/, 60)
@@ -70,8 +66,7 @@ func TestCanNotCreateTaskWithInvalidPriority(t *testing.T) {
 }
 
 func TestCompleteTaskChangeTaskStatus(t *testing.T) {
-	r := NewRepository()
-	service := NewTaskService(&r)
+	service := NewTestService()
 
 	task, err := service.CreateTask("Example task", Backend, 10, 60)
 	if err != nil {
@@ -97,8 +92,7 @@ func TestCompleteTaskChangeTaskStatus(t *testing.T) {
 }
 
 func TestDeleteTaskWorkRight(t *testing.T) {
-	r := NewRepository()
-	service := NewTaskService(&r)
+	service := NewTestService()
 
 	task, err := service.CreateTask("Example task", Backend, 10, 60)
 	if err != nil {

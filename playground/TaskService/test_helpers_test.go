@@ -1,11 +1,11 @@
 package main
 
-func newTestService() TaskService {
+func NewTestService() TaskService {
 	repository := NewRepository()
 	return NewTaskService(&repository)
 }
 
-func newTestTask(title string) Task {
+func NewTestTask(title string) Task {
 	return Task{
 		Area:             Backend,
 		Title:            title,
