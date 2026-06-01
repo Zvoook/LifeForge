@@ -29,5 +29,8 @@ func LoadTasksFromFile(filename string) ([]Task, error) {
 	var tasks []Task
 
 	err = json.Unmarshal(data, &tasks)
+	if err != nil {
+		return nil, err
+	}
 	return tasks, nil
 }

@@ -1,5 +1,7 @@
 package main
 
+import "strings"
+
 type TaskService struct {
 	Repository TaskRepository
 }
@@ -9,6 +11,8 @@ func NewTaskService(r TaskRepository) TaskService {
 }
 
 func (s *TaskService) CreateTask(title string, area Area, priority int, estimatedMinutes int) (Task, error) {
+	title = strings.TrimSpace(title)
+
 	if !validateTitle(title) {
 		return Task{}, ErrInvalidTitle
 	}
