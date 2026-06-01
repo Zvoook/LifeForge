@@ -54,10 +54,7 @@ func (c *CLI) handleShowAllTasks() {
 		return
 	}
 
-	for _, task := range tasks {
-		fmt.Println(task)
-	}
-	fmt.Print("\n")
+	printTasksTable(tasks)
 }
 
 func (c *CLI) handleShowTasksByArea() {
@@ -85,10 +82,7 @@ func (c *CLI) handleShowTasksByArea() {
 		return
 	}
 
-	for _, task := range tasks {
-		fmt.Println(task)
-	}
-	fmt.Print("\n")
+	printTasksTable(tasks)
 }
 
 func (c *CLI) handleShowTasksByStatus() {
@@ -116,10 +110,7 @@ func (c *CLI) handleShowTasksByStatus() {
 		return
 	}
 
-	for _, task := range tasks {
-		fmt.Println(task)
-	}
-	fmt.Print("\n")
+	printTasksTable(tasks)
 }
 
 func (c *CLI) handleFindTaskByID() {
@@ -136,14 +127,13 @@ func (c *CLI) handleFindTaskByID() {
 		return
 	}
 
-	task, err := c.Service.GetTaskById(id)
+	foundTask, err := c.Service.GetTaskById(id)
 	if err != nil {
 		printError(err)
 		return
 	}
 
-	fmt.Println(task)
-	fmt.Print("\n")
+	printTasksTable([]task.Task{foundTask})
 }
 
 func (c *CLI) handleCompleteTask() {
