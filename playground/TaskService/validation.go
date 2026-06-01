@@ -1,10 +1,9 @@
 package main
 
+import "strings"
+
 func validateTitle(title string) bool {
-	if title == "" {
-		return false
-	}
-	return true
+	return strings.TrimSpace(title) != ""
 }
 
 func validateArea(area Area) bool {

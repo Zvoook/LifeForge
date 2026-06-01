@@ -118,3 +118,17 @@ func TestDeleteTaskWorkRight(t *testing.T) {
 		t.Fatalf("expected ErrTaskNotFound, got %v", err)
 	}
 }
+
+func TestTaskServiceCreateTaskTrimsTitleSpaces(t *testing.T) {
+	repository := NewRepository()
+	service := NewTaskService(&repository)
+
+	task, err := service.CreateTask("   Learn Go   ", Backend, 8, 60)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if task.Title != "Learn Go" {
+		t.Fatalf("expected title %q, got %q", "Learn Go", task.Title)
+	}
+}
