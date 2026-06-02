@@ -53,11 +53,13 @@ func (c *CLI) Run() {
 		case 7:
 			c.handleCompleteTask()
 		case 8:
-			c.handleDeleteTask()
+			c.handleBuildDailyPlan()
 		case 9:
-			c.showDashboard()
+			c.ShowDashboard()
 		case 10:
-			c.clearAll()
+			c.handleDeleteTask()
+		case 11:
+			c.ClearAll()
 		case 0:
 			PrintInfo("Goodbye!")
 			return

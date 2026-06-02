@@ -54,7 +54,7 @@ func (c *CLI) handleShowAllTasks() {
 		return
 	}
 
-	PrintTasksTable(tasks)
+	printTasksTable(tasks)
 }
 
 func (c *CLI) handleShowTasksByArea() {
@@ -82,7 +82,7 @@ func (c *CLI) handleShowTasksByArea() {
 		return
 	}
 
-	PrintTasksTable(tasks)
+	printTasksTable(tasks)
 }
 
 func (c *CLI) handleShowTasksByStatus() {
@@ -110,7 +110,7 @@ func (c *CLI) handleShowTasksByStatus() {
 		return
 	}
 
-	PrintTasksTable(tasks)
+	printTasksTable(tasks)
 }
 
 func (c *CLI) handleFindTaskByID() {
@@ -133,7 +133,7 @@ func (c *CLI) handleFindTaskByID() {
 		return
 	}
 
-	PrintTasksTable([]task.Task{foundTask})
+	printTasksTable([]task.Task{foundTask})
 }
 
 func (c *CLI) handleCompleteTask() {
@@ -313,7 +313,7 @@ func (c *CLI) handleDeleteTask() {
 	PrintSuccess("Task deleted")
 }
 
-func (c *CLI) showDashboard() {
+func (c *CLI) ShowDashboard() {
 	tasks := c.Service.GetAllTasks()
 
 	if len(tasks) == 0 {
@@ -381,7 +381,7 @@ func (c *CLI) showDashboard() {
 	fmt.Printf("University: %d\n", university_cnt)
 }
 
-func (c *CLI) clearAll() {
+func (c *CLI) ClearAll() {
 	tasks := c.Service.GetAllTasks()
 
 	if len(tasks) == 0 {
@@ -396,4 +396,24 @@ func (c *CLI) clearAll() {
 		return
 	}
 	PrintSuccess("All tasks cleared")
+}
+
+func (c *CLI) handleBuildDailyPlan() {
+	timeLimit, err := c.readInt("Enter time limit: ")
+	if err != nil {
+		PrintError(err)
+		return
+	}
+
+	tasks, err, totalTime := c.Service.BuildDailyPlan(timeLimit)
+	if err != nil {
+		PrintError(err)
+	}
+
+	if len(tasks) == 0 {
+		PrintInfo("Nothing to plan")
+		return
+	}
+
+	printForgeDailyPlan(tasks, timeLimit, totalTime)
 }

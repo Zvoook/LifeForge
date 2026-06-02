@@ -18,21 +18,31 @@ const (
 )
 
 const Menu = `
-╔════════════════════════════════════════╗
-║          LifeForge Task CLI            ║
-╠════════════════════════════════════════╣
-║  1. Show all tasks                     ║
-║  2. Show tasks by area                 ║
-║  3. Show tasks by status               ║
-║  4. Find task by ID                    ║
-║  5. Create task                        ║
-║  6. Edit task                          ║
-║  7. Complete task                      ║
-║  8. Delete task                        ║
-║  9. Show dashboard                     ║
-║ 10. Clear all tasks                    ║
-║  0. Exit                               ║
-╚════════════════════════════════════════╝
+╔════════════════════════════════════════════════════╗
+║                  LifeForge Task CLI                ║
+║        Build your day. Track your progress.        ║
+╠════════════════════════════════════════════════════╣
+║ View                                               ║
+║   1. Show all tasks                                ║
+║   2. Show tasks by area                            ║
+║   3. Show tasks by status                          ║
+║   4. Find task by ID                               ║
+╠════════════════════════════════════════════════════╣
+║ Create & Edit                                      ║
+║   5. Create task                                   ║
+║   6. Edit task                                     ║
+║   7. Complete task                                 ║
+╠════════════════════════════════════════════════════╣
+║ Planning                                           ║
+║   8. Forge daily plan                              ║
+║   9. Show dashboard                                ║
+╠════════════════════════════════════════════════════╣
+║ Deleting                                           ║
+║  10. Delete task                                   ║
+║  11. Clear all tasks                               ║
+╠════════════════════════════════════════════════════╣
+║   0. Exit                                          ║
+╚════════════════════════════════════════════════════╝
 `
 
 const ClearScreenCommand = "\033[2J\033[H"
@@ -65,7 +75,7 @@ func PrintInfo(prompt string) {
 	fmt.Printf("%s[i] %s%s\n", Blue, prompt, ResetColor)
 }
 
-func PrintTasksTable(tasks []task.Task) {
+func printTasksTable(tasks []task.Task) {
 	if len(tasks) == 0 {
 		PrintInfo("No tasks found")
 		return
@@ -125,4 +135,44 @@ func trimText(text string, maxLength int) string {
 	}
 
 	return text[:maxLength-3] + "..."
+}
+
+const DailyPlanHat = `
+╔════════════════════════════════════════════════════════════╗
+║                    TODAY'S FORGE PLAN                      ║
+║              Recommended tasks for your focus              ║
+╠════════════════════════════════════════════════════════════╣
+║ Available time:   %8d min                             ║
+║ Planned time:     %8d min                             ║
+║ Free time:        %8d min                             ║
+║ Tasks selected:   %8d                                 ║
+╚════════════════════════════════════════════════════════════╝
+
+`
+
+func detectMainFocus(plan []task.Task) string {
+	counter := make(map[task.Area]int)
+	for _, task := range plan {
+		counter[task.Area] += task.EstimatedMinutes
+	}
+
+	var areaWithMaxTime task.Area
+	maxTime := 0
+
+	for area, areaTotalTime := range counter {
+		if areaTotalTime > maxTime {
+			maxTime = areaTotalTime
+			areaWithMaxTime = area
+		}
+	}
+
+	return areaWithMaxTime.String()
+}
+
+func printForgeDailyPlan(plan []task.Task, timeLimit int, totalTime int) {
+	fmt.Printf(DailyPlanHat, timeLimit, totalTime, timeLimit-totalTime, len(plan))
+	printTasksTable(plan)
+
+	fmt.Printf("\nMain focus: %s\n", detectMainFocus(plan))
+	fmt.Println("Recommendation: Start with the first task and do not switch context.")
 }

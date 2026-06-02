@@ -1,6 +1,16 @@
 package task
 
-import "strings"
+import (
+	"sort"
+	"strings"
+)
+
+const (
+	BonusPriorityMultiplier               int = 10
+	BonusStatusInProgress                 int = 15
+	BonusEstimatedMinutesLessThanHalfHour int = 10
+	BonusEstimatedMinutesLessThanHour     int = 5
+)
 
 type TaskService struct {
 	Repository TaskRepository
@@ -185,4 +195,71 @@ func (s *TaskService) EditTaskTitle(id uint32, title string) error {
 		return err
 	}
 	return nil
+}
+
+type scoredTask struct {
+	task  Task
+	score int
+}
+
+func calculateScore(task Task) int {
+	score := task.Priority * BonusPriorityMultiplier
+
+	if task.Status == In_progress {
+		score += BonusStatusInProgress
+	}
+
+	if task.EstimatedMinutes <= 30 {
+		score += BonusEstimatedMinutesLessThanHalfHour
+	} else if task.EstimatedMinutes <= 60 {
+		score += BonusEstimatedMinutesLessThanHour
+	}
+
+	return score
+}
+
+func (s *TaskService) GetCandidates(timeLimit int) ([]scoredTask, error) {
+	allTasks := s.Repository.FindAll()
+
+	if len(allTasks) == 0 {
+		return nil, ErrEmptyFolder
+	}
+
+	candidates := make([]scoredTask, 0)
+
+	for _, candidate := range allTasks {
+		if candidate.EstimatedMinutes < timeLimit && (candidate.Status == Todo || candidate.Status == In_progress) {
+			candidates = append(candidates,
+				scoredTask{task: candidate, score: calculateScore(candidate)})
+		}
+	}
+
+	sort.Slice(candidates, func(i, j int) bool {
+		return candidates[i].score > candidates[j].score || (candidates[i].score == candidates[j].score && candidates[i].task.ID < candidates[j].task.ID)
+	})
+
+	return candidates, nil
+}
+
+func (s *TaskService) BuildDailyPlan(timeLimit int) ([]Task, error, int) {
+	if !ValidateEstimatedMinutes(timeLimit) {
+		return nil, ErrInvalidEstimatedMinutes, 0
+	}
+
+	candidates, err := s.GetCandidates(timeLimit)
+	if err != nil {
+		return nil, err, 0
+	}
+
+	totalTime := 0
+	result := make([]Task, 0)
+
+	for _, candidate := range candidates {
+		if totalTime+candidate.task.EstimatedMinutes <= timeLimit {
+			result = append(result, candidate.task)
+			totalTime += candidate.task.EstimatedMinutes
+		}
+	}
+
+	return result, nil, totalTime
 }
