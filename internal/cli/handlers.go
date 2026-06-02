@@ -9,37 +9,37 @@ import (
 func (c *CLI) handleCreateTask() {
 	title, err := c.readTitle()
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
 	area, err := c.readArea()
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
 	priority, err := c.readPriority()
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
 	em, err := c.readEstimatedMinutes()
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
 	foundTask, err := c.Service.CreateTask(title, area, priority, int(em))
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	err = task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	err = task.SaveTasksToFile(c.Service.GetAllTasks(), c.SaveFileName)
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
@@ -49,135 +49,278 @@ func (c *CLI) handleCreateTask() {
 func (c *CLI) handleShowAllTasks() {
 	tasks := c.Service.GetAllTasks()
 
-	for _, task := range tasks {
-		fmt.Println(task)
+	if len(tasks) == 0 {
+		PrintInfo("No tasks found")
+		return
 	}
-	fmt.Print("\n")
+
+	printTasksTable(tasks)
 }
 
 func (c *CLI) handleShowTasksByArea() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		PrintInfo("Nothing to search")
+		return
+	}
+
 	area, err := c.readArea()
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	tasks, err := c.Service.GetTasksByArea(area)
+	tasks, err = c.Service.GetTasksByArea(area)
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	for _, task := range tasks {
-		fmt.Println(task)
+	if len(tasks) == 0 {
+		PrintInfo("No tasks found")
+		return
 	}
-	fmt.Print("\n")
+
+	printTasksTable(tasks)
+}
+
+func (c *CLI) handleShowTasksByStatus() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		PrintInfo("Nothing to search")
+		return
+	}
+
+	status, err := c.readStatus()
+	if err != nil {
+		PrintError(err)
+		return
+	}
+
+	tasks, err = c.Service.GetTasksByStatus(status)
+	if err != nil {
+		PrintError(err)
+		return
+	}
+
+	if len(tasks) == 0 {
+		PrintInfo("No tasks found")
+		return
+	}
+
+	printTasksTable(tasks)
 }
 
 func (c *CLI) handleFindTaskByID() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		PrintInfo("Nothing to search")
+		return
+	}
+
 	id, err := c.readID()
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	task, err := c.Service.GetTaskById(id)
+	foundTask, err := c.Service.GetTaskById(id)
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	fmt.Println(task)
-	fmt.Print("\n")
+	printTasksTable([]task.Task{foundTask})
 }
 
 func (c *CLI) handleCompleteTask() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		PrintInfo("Nothing to update")
+		return
+	}
+
 	id, err := c.readID()
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
 	_, err = c.Service.GetTaskById(id)
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
 	err = c.Service.CompleteTask(id)
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	err = task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	err = task.SaveTasksToFile(c.Service.GetAllTasks(), c.SaveFileName)
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	printSuccess("Task completed")
+	PrintSuccess("Task completed")
 }
 
-func (c *CLI) handleChangeTaskPriority() {
+func (c *CLI) handleEditTask() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		PrintInfo("Nothing to update")
+		return
+	}
+
 	id, err := c.readID()
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
 	foundTask, err := c.Service.GetTaskById(uint32(id))
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
-	fmt.Printf("Task #%d has priority %d\n", id, foundTask.Priority)
+	fmt.Printf("Task #%d: \n%v\n\n", id, foundTask)
 
-	p, err := c.readPriority()
+	par, err := c.readEditParameter()
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	err = c.Service.ChangePriority(id, p)
+	switch par {
+	case ParameterTitle:
+		title, err := c.readTitle()
+		if err != nil {
+			PrintError(err)
+			return
+		}
+		err = c.Service.EditTitle(id, title)
+		if err != nil {
+			PrintError(err)
+			return
+		}
+
+	case ParameterArea:
+		area, err := c.readArea()
+		if err != nil {
+			PrintError(err)
+			return
+		}
+		err = c.Service.EditArea(id, area)
+		if err != nil {
+			PrintError(err)
+			return
+		}
+
+	case ParameterStatus:
+		status, err := c.readStatus()
+		if err != nil {
+			PrintError(err)
+			return
+		}
+		err = c.Service.EditStatus(id, status)
+		if err != nil {
+			PrintError(err)
+			return
+		}
+
+	case ParameterPriority:
+		priority, err := c.readPriority()
+		if err != nil {
+			PrintError(err)
+			return
+		}
+		err = c.Service.EditPriority(id, priority)
+		if err != nil {
+			PrintError(err)
+			return
+		}
+
+	case ParameterEstimatedMinutes:
+		minutes, err := c.readEstimatedMinutes()
+		if err != nil {
+			PrintError(err)
+			return
+		}
+		err = c.Service.EditEstimatedMinutes(id, minutes)
+		if err != nil {
+			PrintError(err)
+			return
+		}
+	}
+
+	err = task.SaveTasksToFile(c.Service.GetAllTasks(), c.SaveFileName)
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	err = task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
-	if err != nil {
-		printError(err)
-		return
-	}
+	switch par {
+	case ParameterTitle:
+		PrintSuccess("Title updated")
 
-	printSuccess("Priority updated")
+	case ParameterArea:
+		PrintSuccess("Area updated")
+
+	case ParameterStatus:
+		PrintSuccess("Status updated")
+
+	case ParameterPriority:
+		PrintSuccess("Priority updated")
+
+	case ParameterEstimatedMinutes:
+		PrintSuccess("Estimated time updated")
+	}
 }
 
 func (c *CLI) handleDeleteTask() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		PrintInfo("Nothing to delete")
+		return
+	}
+
 	id, err := c.readID()
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
 	err = c.Service.DeleteTask(id)
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	err = task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
+	err = task.SaveTasksToFile(c.Service.GetAllTasks(), c.SaveFileName)
 	if err != nil {
-		printError(err)
+		PrintError(err)
 		return
 	}
 
-	printSuccess("Task deleted")
+	PrintSuccess("Task deleted")
 }
 
-func (c *CLI) showDashboard() {
+func (c *CLI) ShowDashboard() {
 	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		PrintInfo("Nothing to visualise")
+		return
+	}
+
 	var todo_cnt, completed_cnt, blocked_cnt, cancelled_cnt, in_progress_cnt int
 	var totalTimeCount, highPriorityTaskCount int
 	var backend_cnt, english_cnt, algorithms_cnt, guitar_cnt, university_cnt int
@@ -238,12 +381,39 @@ func (c *CLI) showDashboard() {
 	fmt.Printf("University: %d\n", university_cnt)
 }
 
-func (c *CLI) clearAll() {
-	c.Service.ClearAll()
-	err := task.SaveTasksToFile(c.Service.GetAllTasks(), "save.json")
-	if err != nil {
-		printError(err)
+func (c *CLI) ClearAll() {
+	tasks := c.Service.GetAllTasks()
+
+	if len(tasks) == 0 {
+		PrintInfo("Nothing to clear")
 		return
 	}
-	printSuccess("All tasks cleared")
+
+	c.Service.ClearAll()
+	err := task.SaveTasksToFile(c.Service.GetAllTasks(), c.SaveFileName)
+	if err != nil {
+		PrintError(err)
+		return
+	}
+	PrintSuccess("All tasks cleared")
+}
+
+func (c *CLI) handleBuildDailyPlan() {
+	timeLimit, err := c.readInt("Enter time limit: ")
+	if err != nil {
+		PrintError(err)
+		return
+	}
+
+	tasks, err, totalTime := c.Service.BuildDailyPlan(timeLimit)
+	if err != nil {
+		PrintError(err)
+	}
+
+	if len(tasks) == 0 {
+		PrintInfo("Nothing to plan")
+		return
+	}
+
+	printForgeDailyPlan(tasks, timeLimit, totalTime)
 }

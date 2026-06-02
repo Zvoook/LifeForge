@@ -49,7 +49,7 @@ func TestValidateArea(t *testing.T) {
 		},
 		{
 			name:     "invalid unknown area",
-			area:     Unknown,
+			area:     UnknownArea,
 			expected: false,
 		},
 		{

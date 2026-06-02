@@ -30,7 +30,7 @@ func (c *CLI) Run() {
 
 		if err != nil {
 			clearScreen()
-			printError(err)
+			PrintError(err)
 			c.waitForEnter()
 			continue
 		}
@@ -39,28 +39,32 @@ func (c *CLI) Run() {
 
 		switch action {
 		case 1:
-			c.handleCreateTask()
-		case 2:
 			c.handleShowAllTasks()
-		case 3:
+		case 2:
 			c.handleShowTasksByArea()
+		case 3:
+			c.handleShowTasksByStatus()
 		case 4:
 			c.handleFindTaskByID()
 		case 5:
-			c.handleCompleteTask()
+			c.handleCreateTask()
 		case 6:
-			c.handleChangeTaskPriority()
+			c.handleEditTask()
 		case 7:
-			c.handleDeleteTask()
+			c.handleCompleteTask()
 		case 8:
-			c.showDashboard()
+			c.handleBuildDailyPlan()
 		case 9:
-			c.clearAll()
+			c.ShowDashboard()
+		case 10:
+			c.handleDeleteTask()
+		case 11:
+			c.ClearAll()
 		case 0:
-			printInfo("Goodbye!")
+			PrintInfo("Goodbye!")
 			return
 		default:
-			printError(task.ErrUnknownAction)
+			PrintError(task.ErrUnknownAction)
 		}
 
 		c.waitForEnter()

@@ -26,7 +26,7 @@ func TestRepositoryFindByIDReturnsSavedTasks(t *testing.T) {
 		t.Fatalf("expected no error, got %v", err)
 	}
 
-	foundTask, err := repository.FindById(task.ID)
+	foundTask, err := repository.FindByID(task.ID)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -39,7 +39,7 @@ func TestRepositoryFindByIDReturnsSavedTasks(t *testing.T) {
 func TestRepositoryFindByIDWhenTaskDoesNotExist(t *testing.T) {
 	repository := NewRepository()
 
-	_, err := repository.FindById(999)
+	_, err := repository.FindByID(999)
 
 	if err == nil {
 		t.Fatalf("expected error, got nil")
@@ -104,5 +104,27 @@ func TestNewRepositoryFromTasksRestoresNextID(t *testing.T) {
 
 	if newTask.ID != 6 {
 		t.Fatalf("expected new task ID to be 6, got %d", newTask.ID)
+	}
+}
+
+func TestRepositoryResetRestoresNextID(t *testing.T) {
+	repository := NewRepository()
+
+	firstTask := NewTestTask("First task")
+	err := repository.Save(&firstTask)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	repository.Reset()
+
+	newTask := NewTestTask("New task after reset")
+	err = repository.Save(&newTask)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if newTask.ID != 1 {
+		t.Fatalf("expected new task ID after reset to be 1, got %d", newTask.ID)
 	}
 }
