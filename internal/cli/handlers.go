@@ -171,7 +171,7 @@ func (c *CLI) handleCompleteTask() {
 	PrintSuccess("Task completed")
 }
 
-func (c *CLI) handleChangeTaskPriority() {
+func (c *CLI) handleEditTask() {
 	tasks := c.Service.GetAllTasks()
 
 	if len(tasks) == 0 {
@@ -190,18 +190,74 @@ func (c *CLI) handleChangeTaskPriority() {
 		PrintError(err)
 		return
 	}
-	fmt.Printf("Task #%d has priority %d\n", id, foundTask.Priority)
+	fmt.Printf("Task #%d: \n%v\n\n", id, foundTask)
 
-	p, err := c.readPriority()
+	par, err := c.readEditParameter()
 	if err != nil {
 		PrintError(err)
 		return
 	}
 
-	err = c.Service.ChangePriority(id, p)
-	if err != nil {
-		PrintError(err)
-		return
+	switch par {
+	case ParameterTitle:
+		title, err := c.readTitle()
+		if err != nil {
+			PrintError(err)
+			return
+		}
+		err = c.Service.EditTitle(id, title)
+		if err != nil {
+			PrintError(err)
+			return
+		}
+
+	case ParameterArea:
+		area, err := c.readArea()
+		if err != nil {
+			PrintError(err)
+			return
+		}
+		err = c.Service.EditArea(id, area)
+		if err != nil {
+			PrintError(err)
+			return
+		}
+
+	case ParameterStatus:
+		status, err := c.readStatus()
+		if err != nil {
+			PrintError(err)
+			return
+		}
+		err = c.Service.EditStatus(id, status)
+		if err != nil {
+			PrintError(err)
+			return
+		}
+
+	case ParameterPriority:
+		priority, err := c.readPriority()
+		if err != nil {
+			PrintError(err)
+			return
+		}
+		err = c.Service.EditPriority(id, priority)
+		if err != nil {
+			PrintError(err)
+			return
+		}
+
+	case ParameterEstimatedMinutes:
+		minutes, err := c.readEstimatedMinutes()
+		if err != nil {
+			PrintError(err)
+			return
+		}
+		err = c.Service.EditEstimatedMinutes(id, minutes)
+		if err != nil {
+			PrintError(err)
+			return
+		}
 	}
 
 	err = task.SaveTasksToFile(c.Service.GetAllTasks(), c.SaveFileName)
@@ -210,7 +266,22 @@ func (c *CLI) handleChangeTaskPriority() {
 		return
 	}
 
-	PrintSuccess("Priority updated")
+	switch par {
+	case ParameterTitle:
+		PrintSuccess("Title updated")
+
+	case ParameterArea:
+		PrintSuccess("Area updated")
+
+	case ParameterStatus:
+		PrintSuccess("Status updated")
+
+	case ParameterPriority:
+		PrintSuccess("Priority updated")
+
+	case ParameterEstimatedMinutes:
+		PrintSuccess("Estimated time updated")
+	}
 }
 
 func (c *CLI) handleDeleteTask() {

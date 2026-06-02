@@ -26,7 +26,7 @@ const Menu = `
 ║  3. Show tasks by status               ║
 ║  4. Find task by ID                    ║
 ║  5. Create task                        ║
-║  6. Change task priority               ║
+║  6. Edit task                          ║
 ║  7. Complete task                      ║
 ║  8. Delete task                        ║
 ║  9. Show dashboard                     ║

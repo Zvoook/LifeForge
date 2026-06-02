@@ -2,6 +2,7 @@ package task
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Task struct {
@@ -17,8 +18,24 @@ func (t *Task) Complete() {
 	t.Status = Done
 }
 
-func (t *Task) ChangePriority(priority int) {
+func (t *Task) EditPriority(priority int) {
 	t.Priority = priority
+}
+
+func (t *Task) EditTitle(title string) {
+	t.Title = strings.TrimSpace(title)
+}
+
+func (t *Task) EditArea(area Area) {
+	t.Area = area
+}
+
+func (t *Task) EditStatus(status Status) {
+	t.Status = status
+}
+
+func (t *Task) EditEstimatedMinutes(minutes int) {
+	t.EstimatedMinutes = minutes
 }
 
 func (t Task) String() string {

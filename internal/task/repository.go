@@ -6,7 +6,7 @@ type TaskRepository interface {
 	Reset()
 	GetId() uint32
 	Save(task *Task) error
-	FindById(id uint32) (Task, error)
+	FindByID(id uint32) (Task, error)
 	FindAll() []Task
 	FindByArea(area Area) []Task
 	Update(task *Task) error
@@ -90,7 +90,7 @@ func (r *InMemoryTaskRepository) Save(t *Task) error {
 	return nil
 }
 
-func (r *InMemoryTaskRepository) FindById(id uint32) (Task, error) {
+func (r *InMemoryTaskRepository) FindByID(id uint32) (Task, error) {
 	task, contains := r.tasks[id]
 
 	if contains {

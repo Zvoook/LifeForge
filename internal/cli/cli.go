@@ -49,7 +49,7 @@ func (c *CLI) Run() {
 		case 5:
 			c.handleCreateTask()
 		case 6:
-			c.handleChangeTaskPriority()
+			c.handleEditTask()
 		case 7:
 			c.handleCompleteTask()
 		case 8:

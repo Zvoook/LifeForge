@@ -24,6 +24,25 @@ const StatusMenu = `Statuses:
 5. Blocked
 `
 
+const EditTaskMenu = `Actions:
+1. Edit title
+2. Edit area
+3. Edit status
+4. Edit priority
+5. Edit estimated minutes
+`
+
+type Parameter int
+
+const (
+	ParameterTitle Parameter = iota
+	ParameterArea
+	ParameterStatus
+	ParameterPriority
+	ParameterEstimatedMinutes
+	ParameterUnknown
+)
+
 func (c *CLI) readLine(prompt string) (string, error) {
 	fmt.Print(prompt)
 	str, err := c.Reader.ReadString('\n')
@@ -82,7 +101,7 @@ func (c *CLI) readTitle() (string, error) {
 }
 
 func (c *CLI) readPriority() (int, error) {
-	p, err := c.readInt("Enter the priority: ")
+	p, err := c.readInt("Enter the priority (from 1 to 10): ")
 
 	if err != nil {
 		return 0, err
@@ -152,5 +171,29 @@ func (c *CLI) readStatus() (task.Status, error) {
 		return task.Blocked, nil
 	default:
 		return task.UnknownStatus, task.ErrInvalidStatus
+	}
+}
+
+func (c *CLI) readEditParameter() (Parameter, error) {
+	PrintInfo(EditTaskMenu)
+	a, err := c.readInt("Choose parameter: ")
+
+	if err != nil {
+		return ParameterUnknown, task.ErrInvalidStatus
+	}
+
+	switch a {
+	case 1:
+		return ParameterTitle, nil
+	case 2:
+		return ParameterArea, nil
+	case 3:
+		return ParameterStatus, nil
+	case 4:
+		return ParameterPriority, nil
+	case 5:
+		return ParameterEstimatedMinutes, nil
+	default:
+		return ParameterUnknown, task.ErrInvalidStatus
 	}
 }

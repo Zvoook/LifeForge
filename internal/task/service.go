@@ -41,7 +41,7 @@ func (s *TaskService) CreateTask(title string, area Area, priority int, estimate
 }
 
 func (s *TaskService) GetTaskById(id uint32) (Task, error) {
-	return s.Repository.FindById(id)
+	return s.Repository.FindByID(id)
 }
 
 func (s *TaskService) GetAllTasks() []Task {
@@ -73,7 +73,7 @@ func (s *TaskService) GetTasksByStatus(status Status) ([]Task, error) {
 }
 
 func (s *TaskService) CompleteTask(id uint32) error {
-	task, err := s.Repository.FindById(id)
+	task, err := s.Repository.FindByID(id)
 	if err != nil {
 		return err
 	}
@@ -85,17 +85,84 @@ func (s *TaskService) CompleteTask(id uint32) error {
 	return ErrTaskAlreadyCompleted
 }
 
-func (s *TaskService) ChangePriority(id uint32, priority int) error {
+func (s *TaskService) EditPriority(id uint32, priority int) error {
 	if !ValidatePriority(priority) {
 		return ErrInvalidPriority
 	}
-	task, err := s.Repository.FindById(id)
+	task, err := s.Repository.FindByID(id)
 	if err != nil {
 		return err
 	}
-	task.ChangePriority(priority)
+	task.EditPriority(priority)
 	err = s.Repository.Update(&task)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *TaskService) EditTitle(id uint32, title string) error {
+	if !ValidateTitle(title) {
+		return ErrInvalidTitle
+	}
+	task, err := s.Repository.FindByID(id)
+	if err != nil {
+		return err
+	}
+	task.EditTitle(title)
+	err = s.Repository.Update(&task)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *TaskService) EditArea(id uint32, area Area) error {
+	if !ValidateArea(area) {
+		return ErrInvalidArea
+	}
+	task, err := s.Repository.FindByID(id)
+	if err != nil {
+		return err
+	}
+	task.EditArea(area)
+	err = s.Repository.Update(&task)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *TaskService) EditStatus(id uint32, status Status) error {
+	if !ValidateStatus(status) {
+		return ErrInvalidStatus
+	}
+	task, err := s.Repository.FindByID(id)
+	if err != nil {
+		return err
+	}
+	task.EditStatus(status)
+	err = s.Repository.Update(&task)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *TaskService) EditEstimatedMinutes(id uint32, minutes int) error {
+	if !ValidateEstimatedMinutes(minutes) {
+		return ErrInvalidEstimatedMinutes
+	}
+	task, err := s.Repository.FindByID(id)
+	if err != nil {
+		return err
+	}
+	task.EditEstimatedMinutes(minutes)
+	err = s.Repository.Update(&task)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *TaskService) DeleteTask(id uint32) error {
@@ -104,4 +171,18 @@ func (s *TaskService) DeleteTask(id uint32) error {
 
 func (s *TaskService) ClearAll() {
 	s.Repository.Reset()
+}
+
+func (s *TaskService) EditTaskTitle(id uint32, title string) error {
+	task, err := s.Repository.FindByID(id)
+	if err != nil {
+		return err
+	}
+
+	task.EditTitle(title)
+	err = s.Repository.Update(&task)
+	if err != nil {
+		return err
+	}
+	return nil
 }
