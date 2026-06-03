@@ -271,3 +271,39 @@ func (s *TaskService) BuildDailyPlan(timeLimit int) ([]Task, error, int) {
 
 	return result, nil, totalTime
 }
+
+func (s *TaskService) UpdateTask(id uint32, title string, area Area,
+	status Status, priority int, estimatedMinutes int) (Task, error) {
+	if !ValidateTitle(title) {
+		return Task{}, ErrInvalidTitle
+	}
+	if !ValidateArea(area) {
+		return Task{}, ErrInvalidArea
+	}
+	if !ValidateStatus(status) {
+		return Task{}, ErrInvalidStatus
+	}
+	if !ValidatePriority(priority) {
+		return Task{}, ErrInvalidPriority
+	}
+	if !ValidateEstimatedMinutes(estimatedMinutes) {
+		return Task{}, ErrInvalidEstimatedMinutes
+	}
+
+	task, err := s.Repository.FindByID(id)
+	if err != nil {
+		return Task{}, err
+	}
+
+	task.EditTitle(title)
+	task.EditArea(area)
+	task.EditStatus(status)
+	task.EditPriority(priority)
+	task.EditEstimatedMinutes(estimatedMinutes)
+
+	err = s.Repository.Update(&task)
+	if err != nil {
+		return Task{}, err
+	}
+	return Task{}, nil
+}

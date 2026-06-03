@@ -5,8 +5,9 @@ import (
 )
 
 type CreateTaskRequest struct {
-	Title            string    `json:title`
-	Area             task.Area `json:area`
-	Priority         int       `json:priority`
-	EstimatedMinutes int       `json:estimatedMinutes`
+	Title            string      `json:title`
+	Area             task.Area   `json:area`
+	Status           task.Status `json:status`
+	Priority         int         `json:priority`
+	EstimatedMinutes int         `json:estimatedMinutes`
 }

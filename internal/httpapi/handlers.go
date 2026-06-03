@@ -64,24 +64,21 @@ func (s *Server) handleCreateTask(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, createdTask)
 }
 
-func (s *Server) handleTaskByID(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleTask(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		s.handleGetTaskByID(w, r)
-	// case http.MethodPost:
-	// 	s.handleCreateTask(w, r)
+		s.handleGetTask(w, r)
+	case http.MethodPut:
+		s.handleUpdateTask(w, r)
+	case http.MethodDelete:
+		s.handleDeleteTask(w, r)
 	default:
 		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 }
 
-func (s *Server) handleGetTaskByID(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
-		return
-	}
-
+func (s *Server) handleGetTask(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	path = strings.TrimPrefix(path, "/tasks/")
 	id, err := strconv.Atoi(path)
@@ -99,4 +96,40 @@ func (s *Server) handleGetTaskByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, 200, foundedTask)
+}
+
+func (s *Server) handleUpdateTask(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	path = strings.TrimPrefix(path, "/tasks/")
+	id, err := strconv.Atoi(path)
+	if err != nil {
+		writeError(w, 400, "incorrect id")
+		return
+	}
+
+	foundedTask, err := s.service.GetTaskById(uint32(id))
+	if err == task.ErrTaskNotFound {
+		writeError(w, 404, "task not found")
+		return
+	} else if err != nil {
+		writeError(w, 500, "internal server error")
+		return
+	}
+
+	var request CreateTaskRequest
+
+	err = json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		writeError(w, 400, "invalid request body")
+		return
+	}
+
+	updatedTask, err := s.service.UpdateTask(uint32(id), request.Title,
+		request.Area, request.Status, request.Priority, request.EstimatedMinutes)
+	if err != nil {
+		writeError(w, 400, "invalid request body")
+		return
+	}
+
+	writeJSON(w, 200, updatedTask)
 }
