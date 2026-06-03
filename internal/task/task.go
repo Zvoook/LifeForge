@@ -42,3 +42,9 @@ func (t Task) String() string {
 	str := fmt.Sprintf("[%d] %s | %s | %v | priority: %d | %d min", t.ID, t.Area.String(), t.Title, t.Status.String(), t.Priority, t.EstimatedMinutes)
 	return str
 }
+
+func IsDuplicates(task_1 Task, task_2 Task) bool {
+	return task_1.Title == task_2.Title && task_1.Area == task_2.Area &&
+		task_1.Status == task_2.Status && task_1.Priority == task_2.Priority &&
+		task_1.EstimatedMinutes == task_2.EstimatedMinutes
+}

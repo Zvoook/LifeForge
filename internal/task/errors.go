@@ -15,4 +15,6 @@ var (
 	ErrTaskAlreadyCompleted    = errors.New("task is already completed")
 	ErrUnknownAction           = errors.New("unknown action")
 	ErrEmptyFolder             = errors.New("no tasks in folder")
+	ErrTaskAlreadyExist        = errors.New("task already exist")
+	ErrNothingToChange         = errors.New("nothing to update/delete/etc")
 )

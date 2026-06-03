@@ -19,30 +19,69 @@ const (
 
 const Menu = `
 ╔════════════════════════════════════════════════════╗
-║                  LifeForge Task CLI                ║
+║                LifeForge Task CLI                  ║
 ║        Build your day. Track your progress.        ║
 ╠════════════════════════════════════════════════════╣
 ║ View                                               ║
 ║   1. Show all tasks                                ║
 ║   2. Show tasks by area                            ║
 ║   3. Show tasks by status                          ║
-║   4. Find task by ID                               ║
 ╠════════════════════════════════════════════════════╣
 ║ Create & Edit                                      ║
-║   5. Create task                                   ║
-║   6. Edit task                                     ║
-║   7. Complete task                                 ║
+║   4. Create task                                   ║
+║   5. Edit task                                     ║
+║   6. Complete task                                 ║
 ╠════════════════════════════════════════════════════╣
 ║ Planning                                           ║
-║   8. Forge daily plan                              ║
-║   9. Show dashboard                                ║
+║   7. Forge daily plan                              ║
+║   8. Show dashboard                                ║
 ╠════════════════════════════════════════════════════╣
 ║ Deleting                                           ║
-║  10. Delete task                                   ║
-║  11. Clear all tasks                               ║
+║   9. Delete task                                   ║
+║  10. Clear all tasks                               ║
 ╠════════════════════════════════════════════════════╣
 ║   0. Exit                                          ║
 ╚════════════════════════════════════════════════════╝
+`
+
+const DailyPlanHat = `
+╔════════════════════════════════════════════════════════════╗
+║                    TODAY'S FORGE PLAN                      ║
+║              Recommended tasks for your focus              ║
+╠════════════════════════════════════════════════════════════╣
+║ Available time:   %8d min                             ║
+║ Planned time:     %8d min                             ║
+║ Free time:        %8d min                             ║
+║ Tasks selected:   %8d                                 ║
+╚════════════════════════════════════════════════════════════╝
+
+`
+
+const DashboardMenu = `
+╔═════════════════════════════════════════════════════╗
+║                     DASHBOARD                       ║
+║                Folder's statistics                  ║
+╠═════════════════════════════════════════════════════╣
+║ Total tasks:       %8d                         ║
+╠═════════════════════════════════════════════════════╣
+║ TASK BY STATUS                                      ║
+║ To Do:             %8d                         ║
+║ In Progress:       %8d                         ║
+║ Completed:         %8d                         ║
+║ Blocked:           %8d                         ║
+║ Cancelled:         %8d                         ║
+╠═════════════════════════════════════════════════════╣
+║ Total estimated time:%6d                         ║
+║ High priority tasks: %6d                         ║
+╠═════════════════════════════════════════════════════╣
+║ TASK BY AREA                                        ║
+║ Backend:           %8d                         ║
+║ English:           %8d                         ║
+║ Algorithms:        %8d                         ║
+║ Guitar:            %8d                         ║
+║ University:        %8d                         ║
+╚═════════════════════════════════════════════════════╝
+
 `
 
 const ClearScreenCommand = "\033[2J\033[H"
@@ -137,19 +176,6 @@ func trimText(text string, maxLength int) string {
 	return text[:maxLength-3] + "..."
 }
 
-const DailyPlanHat = `
-╔════════════════════════════════════════════════════════════╗
-║                    TODAY'S FORGE PLAN                      ║
-║              Recommended tasks for your focus              ║
-╠════════════════════════════════════════════════════════════╣
-║ Available time:   %8d min                             ║
-║ Planned time:     %8d min                             ║
-║ Free time:        %8d min                             ║
-║ Tasks selected:   %8d                                 ║
-╚════════════════════════════════════════════════════════════╝
-
-`
-
 func detectMainFocus(plan []task.Task) string {
 	counter := make(map[task.Area]int)
 	for _, task := range plan {
@@ -175,4 +201,28 @@ func printForgeDailyPlan(plan []task.Task, timeLimit int, totalTime int) {
 
 	fmt.Printf("\nMain focus: %s\n", detectMainFocus(plan))
 	fmt.Println("Recommendation: Start with the first task and do not switch context.")
+}
+
+func PrintTaskActionResult(message string, changedTask task.Task) {
+	PrintSuccess(message)
+	printTasksTable([]task.Task{changedTask})
+}
+
+func PrintTaskChangeResult(message string, beforeTask task.Task, afterTask task.Task) {
+	PrintSuccess(message)
+	fmt.Println("Task before changes:")
+	printTasksTable([]task.Task{beforeTask})
+
+	fmt.Println("\nTask after changes:")
+	printTasksTable([]task.Task{afterTask})
+}
+
+func printDashboard(tasksByStatus map[task.Status]int, tasksByArea map[task.Area]int,
+	totalTasks int, totalEstimatedTime int, highPriorityTaskCount int) {
+	fmt.Printf(DashboardMenu, totalTasks, tasksByStatus[task.Todo],
+		tasksByStatus[task.In_progress], tasksByStatus[task.Done],
+		tasksByStatus[task.Blocked], tasksByStatus[task.Cancelled],
+		totalEstimatedTime, highPriorityTaskCount, tasksByArea[task.Backend],
+		tasksByArea[task.English], tasksByArea[task.Algorithms],
+		tasksByArea[task.Guitar], tasksByArea[task.University])
 }

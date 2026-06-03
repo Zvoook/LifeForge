@@ -43,6 +43,14 @@ func (s *TaskService) CreateTask(title string, area Area, priority int, estimate
 		Priority:         priority,
 		EstimatedMinutes: estimatedMinutes,
 	}
+
+	duplicateCandidates, _ := s.GetTasksByArea(area)
+	for _, candidate := range duplicateCandidates {
+		if IsDuplicates(task, candidate) {
+			return Task{}, ErrTaskAlreadyExist
+		}
+	}
+
 	err := s.Repository.Save(&task)
 	if err != nil {
 		return Task{}, err
