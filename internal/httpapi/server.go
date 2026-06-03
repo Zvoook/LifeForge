@@ -22,6 +22,7 @@ func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/health", s.handleHealth)
+	mux.HandleFunc("/tasks", s.handleTasks)
 
 	return mux
 }

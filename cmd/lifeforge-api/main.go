@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Zvoook/lifeforge/internal/cli"
 	"github.com/Zvoook/lifeforge/internal/httpapi"
 	"github.com/Zvoook/lifeforge/internal/task"
 )
