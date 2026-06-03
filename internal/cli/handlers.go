@@ -31,7 +31,7 @@ func (c *CLI) handleCreateTask() {
 		return
 	}
 
-	foundTask, err := c.Service.CreateTask(title, area, priority, int(em))
+	createdTask, err := c.Service.CreateTask(title, area, priority, int(em))
 	if err != nil {
 		PrintError(err)
 		return
@@ -43,7 +43,7 @@ func (c *CLI) handleCreateTask() {
 		return
 	}
 
-	fmt.Printf("\nCreated: \n%v\n", foundTask)
+	PrintTaskActionResult("Task created\n", createdTask)
 }
 
 func (c *CLI) handleShowAllTasks() {
@@ -114,17 +114,9 @@ func (c *CLI) handleShowTasksByStatus() {
 }
 
 func (c *CLI) handleFindTaskByID() {
-	tasks := c.Service.GetAllTasks()
-
-	if len(tasks) == 0 {
-		PrintInfo("Nothing to search")
-		return
-	}
-
-	id, err := c.readID()
+	id, err := c.selectIDForAction()
 	if err != nil {
 		PrintError(err)
-		return
 	}
 
 	foundTask, err := c.Service.GetTaskById(id)
@@ -137,20 +129,12 @@ func (c *CLI) handleFindTaskByID() {
 }
 
 func (c *CLI) handleCompleteTask() {
-	tasks := c.Service.GetAllTasks()
-
-	if len(tasks) == 0 {
-		PrintInfo("Nothing to update")
-		return
-	}
-
-	id, err := c.readID()
+	id, err := c.selectIDForAction()
 	if err != nil {
 		PrintError(err)
-		return
 	}
 
-	_, err = c.Service.GetTaskById(id)
+	foundedTask, err := c.Service.GetTaskById(id)
 	if err != nil {
 		PrintError(err)
 		return
@@ -168,29 +152,21 @@ func (c *CLI) handleCompleteTask() {
 		return
 	}
 
-	PrintSuccess("Task completed")
+	PrintTaskActionResult("Task completed\n", foundedTask)
 }
 
 func (c *CLI) handleEditTask() {
-	tasks := c.Service.GetAllTasks()
-
-	if len(tasks) == 0 {
-		PrintInfo("Nothing to update")
-		return
+	id, err := c.selectIDForAction()
+	if err != nil {
+		PrintError(err)
 	}
 
-	id, err := c.readID()
+	beforeTask, err := c.Service.GetTaskById(uint32(id))
 	if err != nil {
 		PrintError(err)
 		return
 	}
-
-	foundTask, err := c.Service.GetTaskById(uint32(id))
-	if err != nil {
-		PrintError(err)
-		return
-	}
-	fmt.Printf("Task #%d: \n%v\n\n", id, foundTask)
+	fmt.Printf("Task #%d: \n%v\n\n", id, beforeTask)
 
 	par, err := c.readEditParameter()
 	if err != nil {
@@ -266,37 +242,22 @@ func (c *CLI) handleEditTask() {
 		return
 	}
 
-	switch par {
-	case ParameterTitle:
-		PrintSuccess("Title updated")
-
-	case ParameterArea:
-		PrintSuccess("Area updated")
-
-	case ParameterStatus:
-		PrintSuccess("Status updated")
-
-	case ParameterPriority:
-		PrintSuccess("Priority updated")
-
-	case ParameterEstimatedMinutes:
-		PrintSuccess("Estimated time updated")
-	}
-}
-
-func (c *CLI) handleDeleteTask() {
-	tasks := c.Service.GetAllTasks()
-
-	if len(tasks) == 0 {
-		PrintInfo("Nothing to delete")
-		return
-	}
-
-	id, err := c.readID()
+	afterTask, err := c.Service.GetTaskById(uint32(id))
 	if err != nil {
 		PrintError(err)
 		return
 	}
+
+	PrintTaskChangeResult("Task edited\n", beforeTask, afterTask)
+}
+
+func (c *CLI) handleDeleteTask() {
+	id, err := c.selectIDForAction()
+	if err != nil {
+		PrintError(err)
+	}
+
+	deletedTask, err := c.Service.GetTaskById(id)
 
 	err = c.Service.DeleteTask(id)
 	if err != nil {
@@ -310,7 +271,8 @@ func (c *CLI) handleDeleteTask() {
 		return
 	}
 
-	PrintSuccess("Task deleted")
+	PrintSuccess("Task ")
+	PrintTaskActionResult("Task deleted\n", deletedTask)
 }
 
 func (c *CLI) ShowDashboard() {
@@ -321,64 +283,24 @@ func (c *CLI) ShowDashboard() {
 		return
 	}
 
-	var todo_cnt, completed_cnt, blocked_cnt, cancelled_cnt, in_progress_cnt int
-	var totalTimeCount, highPriorityTaskCount int
-	var backend_cnt, english_cnt, algorithms_cnt, guitar_cnt, university_cnt int
+	counterTaskByStatus := make(map[task.Status]int)
+	counterTaskByArea := make(map[task.Area]int)
+	totalTimeCount := 0
+	highPriorityTaskCount := 0
 
-	for i := 0; i < len(tasks); i++ {
-		totalTimeCount += tasks[i].EstimatedMinutes
+	for _, oneTask := range tasks {
+		totalTimeCount += oneTask.EstimatedMinutes
 
-		if tasks[i].Priority >= 8 {
+		if oneTask.Priority >= 8 {
 			highPriorityTaskCount++
 		}
 
-		switch tasks[i].Status {
-		case task.Todo:
-			todo_cnt++
-		case task.Done:
-			completed_cnt++
-		case task.Blocked:
-			blocked_cnt++
-		case task.Cancelled:
-			cancelled_cnt++
-		case task.In_progress:
-			in_progress_cnt++
-		}
-
-		switch tasks[i].Area {
-		case task.Backend:
-			backend_cnt++
-		case task.English:
-			english_cnt++
-		case task.Algorithms:
-			algorithms_cnt++
-		case task.Guitar:
-			guitar_cnt++
-		case task.University:
-			university_cnt++
-		}
+		counterTaskByStatus[oneTask.Status]++
+		counterTaskByArea[oneTask.Area]++
 	}
 
-	fmt.Printf("%sLifeForge Dashboard%s\n\n", Yellow, ResetColor)
-
-	fmt.Printf("Total tasks: %d\n", len(tasks))
-	fmt.Printf("Completed: %d\n", completed_cnt)
-	fmt.Printf("To Do: %d\n", todo_cnt)
-	fmt.Printf("In Progress: %d\n", in_progress_cnt)
-	fmt.Printf("Blocked: %d\n", blocked_cnt)
-	fmt.Printf("Cancelled: %d\n", cancelled_cnt)
-	fmt.Print("\n")
-
-	fmt.Printf("Total estimated time: %d\n", totalTimeCount)
-	fmt.Printf("High priority tasks: %d\n", highPriorityTaskCount)
-	fmt.Print("\n")
-
-	fmt.Printf("Tasks by area:\n")
-	fmt.Printf("Backend: %d\n", backend_cnt)
-	fmt.Printf("English: %d\n", english_cnt)
-	fmt.Printf("Algorithms: %d\n", algorithms_cnt)
-	fmt.Printf("Guitar: %d\n", guitar_cnt)
-	fmt.Printf("University: %d\n", university_cnt)
+	printDashboard(counterTaskByStatus, counterTaskByArea,
+		len(tasks), totalTimeCount, highPriorityTaskCount)
 }
 
 func (c *CLI) ClearAll() {

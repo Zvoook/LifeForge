@@ -45,20 +45,18 @@ func (c *CLI) Run() {
 		case 3:
 			c.handleShowTasksByStatus()
 		case 4:
-			c.handleFindTaskByID()
-		case 5:
 			c.handleCreateTask()
-		case 6:
+		case 5:
 			c.handleEditTask()
-		case 7:
+		case 6:
 			c.handleCompleteTask()
-		case 8:
+		case 7:
 			c.handleBuildDailyPlan()
-		case 9:
+		case 8:
 			c.ShowDashboard()
-		case 10:
+		case 9:
 			c.handleDeleteTask()
-		case 11:
+		case 10:
 			c.ClearAll()
 		case 0:
 			PrintInfo("Goodbye!")
