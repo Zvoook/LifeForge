@@ -23,6 +23,7 @@ func (s *Server) Routes() http.Handler {
 
 	mux.HandleFunc("/health", s.handleHealth)
 	mux.HandleFunc("/tasks", s.handleTasks)
+	mux.HandleFunc("/tasks/", s.handleTaskByID)
 
 	return mux
 }

@@ -1,6 +1,9 @@
 package httpapi
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/Zvoook/lifeforge/internal/task"
 
 	"encoding/json"
@@ -59,4 +62,41 @@ func (s *Server) handleCreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeJSON(w, http.StatusOK, createdTask)
+}
+
+func (s *Server) handleTaskByID(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		s.handleGetTaskByID(w, r)
+	// case http.MethodPost:
+	// 	s.handleCreateTask(w, r)
+	default:
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+}
+
+func (s *Server) handleGetTaskByID(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	path := r.URL.Path
+	path = strings.TrimPrefix(path, "/tasks/")
+	id, err := strconv.Atoi(path)
+	if err != nil {
+		writeError(w, 400, "incorrect id")
+		return
+	}
+
+	foundedTask, err := s.service.GetTaskById(uint32(id))
+	if err == task.ErrTaskNotFound {
+		writeError(w, 404, "task not found")
+		return
+	} else if err != nil {
+		writeError(w, 500, "internal server error")
+		return
+	}
+	writeJSON(w, 200, foundedTask)
 }
