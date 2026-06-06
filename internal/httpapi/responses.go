@@ -44,6 +44,7 @@ func writeServiceError(w http.ResponseWriter, err error) {
 	statusCode, ok := serviceErrorStatusCodes[err]
 	if !ok {
 		writeError(w, http.StatusInternalServerError, "internal server error")
+		return
 	}
 
 	writeError(w, statusCode, err.Error())

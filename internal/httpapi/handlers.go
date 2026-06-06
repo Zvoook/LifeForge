@@ -130,22 +130,68 @@ func (s *Server) handleUpdateTask(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, updatedTask)
 }
 
+func parseTaskID(path string) (uint32, error) {
+	path = strings.TrimPrefix(path, "/tasks/")
+
+	if path == "" {
+		return 0, task.ErrInvalidId
+	}
+
+	id, err := strconv.Atoi(path)
+	if err != nil {
+		return 0, task.ErrInvalidId
+	}
+
+	if id <= 0 {
+		return 0, task.ErrInvalidId
+	}
+
+	return uint32(id), nil
+}
+
 func parsePath(path string, prefix string) (uint32, string, error) {
 	path = strings.TrimPrefix(path, prefix)
-	parts := strings.Split(path, "/")
-	id, err := strconv.Atoi(parts[0])
-	if len(parts) == 2 {
-		action := parts[1]
-		return uint32(id), action, err
+
+	if path == "" {
+		return 0, "", task.ErrInvalidId
 	}
-	return uint32(id), "", err
+
+	parts := strings.Split(path, "/")
+
+	if len(parts) > 2 {
+		return 0, "", task.ErrInvalidId
+	}
+
+	if parts[0] == "" {
+		return 0, "", task.ErrInvalidId
+	}
+
+	id, err := strconv.Atoi(parts[0])
+	if err != nil {
+		return 0, "", task.ErrInvalidId
+	}
+
+	if id <= 0 {
+		return 0, "", task.ErrInvalidId
+	}
+
+	action := ""
+	if len(parts) == 2 {
+		if parts[1] == "" {
+			return 0, "", task.ErrInvalidId
+		}
+
+		action = parts[1]
+	}
+
+	return uint32(id), action, nil
 }
 
 func (s *Server) handleDeleteTask(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	id, _, err := parsePath(path, "/tasks/")
 	if err != nil {
-		writeServiceError(w, err)
+		writeError(w, http.StatusBadRequest, "invalid task id")
 		return
 	}
 
@@ -178,7 +224,7 @@ func (s *Server) handleCompleteTask(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	id, action, err := parsePath(path, "/tasks/")
 	if err != nil {
-		writeServiceError(w, err)
+		writeError(w, http.StatusBadRequest, "invalid task id")
 		return
 	} else if action != "complete" {
 		writeError(w, 400, "incorrect action")

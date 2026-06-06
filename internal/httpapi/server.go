@@ -24,7 +24,6 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("/health", s.handleHealth)
 	mux.HandleFunc("/tasks", s.handleTasks)
 	mux.HandleFunc("/tasks/", s.handleTask)
-	//mux.HandleFunc("/tasks/{id}/complete", s.handleTask)
 
 	return mux
 }
